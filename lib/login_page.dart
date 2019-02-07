@@ -10,16 +10,10 @@ class LoginPage extends StatefulWidget {
   State<StatefulWidget> createState() => _LoginPageState();
 }
 
-enum FormType {
-  login,
-  register
-}
-
 class _LoginPageState extends State<LoginPage> {
   final formKey = GlobalKey<FormState>();
   String _email;
   String _password;
-  FormType _formType = FormType.login;
 
   bool validateAndSave() {
     final form = formKey.currentState;
@@ -30,7 +24,7 @@ class _LoginPageState extends State<LoginPage> {
     return false;
   }
 
-  void validateAndSubmit() async {
+/*  void validateAndSubmit() async {
     if (validateAndSave()) {
       try {
         if (_formType == FormType.login) {
@@ -47,19 +41,9 @@ class _LoginPageState extends State<LoginPage> {
       }
     }
   }
-
+*/
   void moveToRegister() {
-    formKey.currentState.reset();
-    setState(() {
-      _formType = FormType.register;
-    });
-  }
 
-  void moveToLogin() {
-    formKey.currentState.reset();
-    setState(() {
-      _formType = FormType.login;
-    });
   }
 
   @override
@@ -99,28 +83,15 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   List<Widget> buildSubmitButtons() {
-    if (_formType == FormType.login) {
-      return [
-        RaisedButton(
-          child: Text('Login', style: TextStyle(fontSize: 20)),
-          onPressed: validateAndSubmit,
-        ),
-        FlatButton(
-          child: Text('Create an account', style: TextStyle(fontSize: 20.0)),
-          onPressed: moveToRegister,
-        )
-      ];
-    } else {
-      return [
-        RaisedButton(
-          child: Text('Create an account', style: TextStyle(fontSize: 20)),
-          onPressed: validateAndSubmit,
-        ),
-        FlatButton(
-          child: Text('Have an account? Login', style: TextStyle(fontSize: 20.0)),
-          onPressed: moveToLogin,
-        )
-      ];
-    }
+    return [
+      RaisedButton(
+        child: Text('Login', style: TextStyle(fontSize: 20)),
+        onPressed: null,
+      ),
+      FlatButton(
+        child: Text('Create an account', style: TextStyle(fontSize: 20.0)),
+        onPressed: moveToRegister,
+      )
+    ];
   }
 }
