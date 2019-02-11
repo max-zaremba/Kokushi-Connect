@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kokushi_connect/create_user_page.dart';
 import 'auth.dart';
 
 class LoginPage extends StatefulWidget {
@@ -43,7 +44,19 @@ class _LoginPageState extends State<LoginPage> {
   }
 */
   void moveToRegister() {
-    home:
+    Navigator.of(context).push(
+        new MaterialPageRoute(
+            builder: (BuildContext context) {
+              return MaterialApp(
+                title: 'Login',
+                theme: ThemeData(
+                  primarySwatch: Colors.blue,
+                ),
+                home: CreateUserPage(auth: Auth()),
+              );
+            }
+        )
+    );
   }
 
   @override

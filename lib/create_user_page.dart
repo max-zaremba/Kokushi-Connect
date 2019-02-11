@@ -15,7 +15,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
   String _firstName;
   String _lastName;
   int _month;
-   List<DropdownMenuItem> months = [
+  List<DropdownMenuItem> months = [
      new DropdownMenuItem(value: 1, child: Text("January"),),
      new DropdownMenuItem(value: 2, child: Text("Febuary"),),
      new DropdownMenuItem(value: 3, child: Text("March"),),
@@ -34,7 +34,22 @@ class _CreateUserPageState extends State<CreateUserPage> {
 
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Login'),
+      ),
 
+      body: Container(
+          padding: EdgeInsets.all(16.0),
+          child: Form(
+            key: formKey,
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: buildInputs()
+            ),
+          )
+      ),
+    );
   }
 
   List<Widget> buildInputs() {
