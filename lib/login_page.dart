@@ -43,7 +43,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 */
   void moveToRegister() {
-
+    home:
   }
 
   @override
