@@ -48,10 +48,6 @@ class _LoginPageState extends State<LoginPage> {
         new MaterialPageRoute(
             builder: (BuildContext context) {
               return MaterialApp(
-                title: 'Login',
-                theme: ThemeData(
-                  primarySwatch: Colors.blue,
-                ),
                 home: CreateUserPage(auth: Auth()),
               );
             }
