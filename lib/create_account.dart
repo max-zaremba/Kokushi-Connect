@@ -3,10 +3,10 @@ import 'auth.dart';
 import 'db_control.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:intl/intl.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CreateAccount extends StatefulWidget {
-  CreateAccount({this.auth, this.onSignedOut, this.db});
+  CreateAccount({this.auth, this.db, this.onSignedOut});
   final BaseAuth auth;
   final Database db;
   final VoidCallback onSignedOut;
@@ -42,6 +42,8 @@ class _CreateAccountState extends State<CreateAccount> {
   DateTime date;
 
   bool validateAndSave() {
+    print(widget.auth);
+    print(widget.db);
     final form = formKey.currentState;
     if (form.validate()) {
       form.save();
@@ -52,9 +54,11 @@ class _CreateAccountState extends State<CreateAccount> {
 
   void validateAndSubmit() async {
     if (validateAndSave()) {
-          //await widget.db.createAccount(_firstName, _lastName, _dob, _rank, true);
-          //print('Woah it actually worked');
-      await Firestore.instance.collection("users").document(await widget.auth.currentUser()).setData({ 'firstName': _firstName, 'lastName': _lastName, 'dob': _dob, 'rank': _rank, 'coach': false });
+      //await widget.db.createAccount(_firstName, _lastName, _dob, _rank, true);
+      String currentUser = await widget.auth.currentUser();
+      print(await widget.db.getFirstName(currentUser));
+      //print('Woah it actually worked');
+      //await Firestore.instance.collection("users").document(await widget.auth.currentUser()).setData({ 'firstName': _firstName, 'lastName': _lastName, 'dob': _dob, 'rank': _rank, 'coach': false });
     }
   }
 
