@@ -9,7 +9,7 @@ abstract class Database {
   Future<String> getEmail(String userId);
   Future<DateTime> getDOB(String userId);
   Future<String> getRank(String userId);
-  Future<String> getDojoIdByUser(String userId);
+  Future<String> getDojoIdByUserId(String userId);
   Future<String> getAccountType(String userId);
 
   //user setters
@@ -26,7 +26,7 @@ abstract class Database {
   //dojo getters
   Future<String> getDojoName(String dojoId);
   Future<String> getDojoCode(String dojoId);
-  //Future<String> getDojoIdByDojo(String dojoName); //TODO
+  Future<String> getDojoIdByDojoName(String dojoName);
   
   //dojo setters
   Future<void> setDojoCode(String code, String dojoId);
@@ -67,7 +67,7 @@ class Db implements Database {
     return document.data['rank'];
   }
 
-  Future<String> getDojoIdByUser(String userId) async {
+  Future<String> getDojoIdByUserId(String userId) async {
     DocumentSnapshot document = await userInfo(userId);
     return document.data['dojoId'];
   }
@@ -108,7 +108,6 @@ class Db implements Database {
 
   //account creation
   Future<void> createAccount(String firstName, String lastName, DateTime dob, String rank, String accountType) async {
-    //TODO: implement with setters
     return _firestore.collection("users").document().setData({ 'firstName': firstName, 'lastName': lastName, 'dob': dob, 'rank': rank, 'accountType': accountType });
   }
 
@@ -126,6 +125,11 @@ class Db implements Database {
   Future<String> getDojoCode(String dojoId) async {
     DocumentSnapshot document = await userInfo(dojoId);
     return document.data['dojoCode'];
+  }
+
+  Future<String> getDojoIdByDojoName(String dojoName) async {
+    //TODO
+    return "NOT A KEY";
   }
 
   //setters for dojo
