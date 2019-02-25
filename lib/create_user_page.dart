@@ -36,13 +36,16 @@ class _CreateUserPageState extends State<CreateUserPage> {
     DropdownMenuItem<String>(child: Text("Black, Sandan"), value: "Sandan"),
     DropdownMenuItem<String>(child: Text("Black, Yodan"), value: "Yodan"),
     DropdownMenuItem<String>(child: Text("Black, Godan"), value: "Godan"),
+    //anything below this line is really rare, prolly not gonna have any of these on the app
     DropdownMenuItem<String>(child: Text("Black, Rokudan"), value: "Rokudan"),
     DropdownMenuItem<String>(child: Text("Black, Shichidan"), value: "Shichidan"),
     DropdownMenuItem<String>(child: Text("Black, Hachidan"), value: "Hachidan"),
     DropdownMenuItem<String>(child: Text("Black, Kudan"), value: "Kudan"),
     DropdownMenuItem<String>(child: Text("Black, Judan"), value: "Judan")
   ];
-  String _coach = "student";
+
+  String _accountType = "Student";
+
 
   InputType inputType = InputType.date;
   @override
@@ -147,16 +150,17 @@ class _CreateUserPageState extends State<CreateUserPage> {
         children: <Widget>[
           RadioListTile<String>(
             title: const Text('Student'),
-            value: "student",
-            groupValue: _coach,
-            onChanged: (value) { setState(() { _coach = value; }); },
+            value: "Student",
+            groupValue: _accountType,
+            onChanged: (value) { setState(() { _accountType = value; }); },
           ),
           RadioListTile<String>(
             title: const Text('Coach'),
-            value: "coach",
-            groupValue: _coach,
-            onChanged: (value) { setState(() { _coach = value; }); },
-          ),
+            value: "Coach",
+            groupValue: _accountType,
+            onChanged: (value) { setState(() { _accountType = value; });
+            },
+          )
         ],
       ),
       RaisedButton(
@@ -168,7 +172,10 @@ class _CreateUserPageState extends State<CreateUserPage> {
           child: Text('Create Dojo', style: TextStyle(fontSize: 20)),
           onPressed: moveToCreateDojo,
         ),
-        visible: (_coach == "coach"),
+
+
+        visible: (_accountType == "Coach"),
+
       ),
       FlatButton(
         child: Text('Have an account? Login', style: TextStyle(fontSize: 20.0)),
