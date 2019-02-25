@@ -22,8 +22,25 @@ class _CreateUserPageState extends State<CreateUserPage> {
   DateTime _dob;
   String _belt;
   List<DropdownMenuItem<String>> belts = [
-    DropdownMenuItem<String>(child: Text("White Belt"), value: "White"),
-    DropdownMenuItem<String>(child: Text("Black Belt"), value: "Black"),
+    DropdownMenuItem<String>(child: Text("White"), value: "White"),
+    DropdownMenuItem<String>(child: Text("Yellow"), value: "Yellow"),
+    DropdownMenuItem<String>(child: Text("Orange"), value: "Orange"),
+    DropdownMenuItem<String>(child: Text("Green"), value: "Green"),
+    DropdownMenuItem<String>(child: Text("Blue"), value: "Blue"),
+    DropdownMenuItem<String>(child: Text("Purple"), value: "Purple"),
+    DropdownMenuItem<String>(child: Text("Brown, Sankyu"), value: "Sankyu"),
+    DropdownMenuItem<String>(child: Text("Brown, Nikyu"), value: "Nikyu"),
+    DropdownMenuItem<String>(child: Text("Brown, Ikkyu"), value: "Ikkyu"),
+    DropdownMenuItem<String>(child: Text("Black, Shodan"), value: "Shodan"),
+    DropdownMenuItem<String>(child: Text("Black, Nidan"), value: "Nidan"),
+    DropdownMenuItem<String>(child: Text("Black, Sandan"), value: "Sandan"),
+    DropdownMenuItem<String>(child: Text("Black, Yodan"), value: "Yodan"),
+    DropdownMenuItem<String>(child: Text("Black, Godan"), value: "Godan"),
+    DropdownMenuItem<String>(child: Text("Black, Rokudan"), value: "Rokudan"),
+    DropdownMenuItem<String>(child: Text("Black, Shichidan"), value: "Shichidan"),
+    DropdownMenuItem<String>(child: Text("Black, Hachidan"), value: "Hachidan"),
+    DropdownMenuItem<String>(child: Text("Black, Kudan"), value: "Kudan"),
+    DropdownMenuItem<String>(child: Text("Black, Judan"), value: "Judan")
   ];
   String _coach = "student";
 
