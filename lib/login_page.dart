@@ -27,10 +27,8 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void validateAndSubmit() async {
-    print("validateAndSubmit called");
     if (validateAndSave()) {
       try {
-        print("validateAndSave success");
         String userId = await widget.auth.signInWithEmailAndPassword(_email, _password);
         print('Signed in: $userId');
         widget.onSignedIn();
