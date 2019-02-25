@@ -25,12 +25,11 @@ class _CreateUserPageState extends State<CreateUserPage> {
     DropdownMenuItem<String>(child: Text("White Belt"), value: "White"),
     DropdownMenuItem<String>(child: Text("Black Belt"), value: "Black"),
   ];
-  bool _coach = false;
+  String _coach = "student";
 
   InputType inputType = InputType.date;
   @override
   Widget build(BuildContext context) {
-    print(_belt);
     return Scaffold(
       appBar: AppBar(
         title: Text('Create Account'),
@@ -129,15 +128,15 @@ class _CreateUserPageState extends State<CreateUserPage> {
 
       Column(
         children: <Widget>[
-          RadioListTile<bool>(
+          RadioListTile<String>(
             title: const Text('Student'),
-            value: false,
+            value: "student",
             groupValue: _coach,
             onChanged: (value) { setState(() { _coach = value; }); },
           ),
-          RadioListTile<bool>(
+          RadioListTile<String>(
             title: const Text('Coach'),
-            value: true,
+            value: "coach",
             groupValue: _coach,
             onChanged: (value) { setState(() { _coach = value; }); },
           ),
@@ -152,7 +151,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
           child: Text('Create Dojo', style: TextStyle(fontSize: 20)),
           onPressed: moveToCreateDojo,
         ),
-        visible: _coach,
+        visible: (_coach == "coach"),
       ),
       FlatButton(
         child: Text('Have an account? Login', style: TextStyle(fontSize: 20.0)),
