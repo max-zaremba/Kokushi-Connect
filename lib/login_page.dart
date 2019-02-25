@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kokushi_connect/create_user_page.dart';
 import 'auth.dart';
+import 'db_control.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({this.auth, this.onSignedIn});
@@ -25,16 +26,13 @@ class _LoginPageState extends State<LoginPage> {
     return false;
   }
 
-/*  void validateAndSubmit() async {
+  void validateAndSubmit() async {
+    print("validateAndSubmit called");
     if (validateAndSave()) {
       try {
-        if (_formType == FormType.login) {
-          String userId = await widget.auth.signInWithEmailAndPassword(_email, _password);
-          print('Signed in: $userId');
-        } else {
-          String userId = await widget.auth.createUserWithEmailAndPassword(_email, _password);
-          print('Registered user: $userId');
-        }
+        print("validateAndSave success");
+        String userId = await widget.auth.signInWithEmailAndPassword(_email, _password);
+        print('Signed in: $userId');
         widget.onSignedIn();
       }
       catch (e) {
@@ -42,13 +40,13 @@ class _LoginPageState extends State<LoginPage> {
       }
     }
   }
-*/
+
   void moveToRegister() {
     Navigator.of(context).push(
         new MaterialPageRoute(
             builder: (BuildContext context) {
               return MaterialApp(
-                home: CreateUserPage(auth: Auth()),
+                home: CreateUserPage(auth: Auth(), db: Db()),
               );
             }
         )
@@ -95,7 +93,7 @@ class _LoginPageState extends State<LoginPage> {
     return [
       RaisedButton(
         child: Text('Login', style: TextStyle(fontSize: 20)),
-        onPressed: null,
+        onPressed: validateAndSubmit,
       ),
       FlatButton(
         child: Text('Create an account', style: TextStyle(fontSize: 20.0)),

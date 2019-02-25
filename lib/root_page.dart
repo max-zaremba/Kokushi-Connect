@@ -51,9 +51,8 @@ class _RootPageState extends State<RootPage> {
           onSignedIn: _signedIn,
         );
       case AuthStatus.signedIn:
-        return CreateAccount(
+        return HomePage(
           auth: widget.auth,
-          db: Db(),
           onSignedOut: _signedOut,
         );
     }
