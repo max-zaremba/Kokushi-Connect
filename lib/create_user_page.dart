@@ -43,11 +43,9 @@ class _CreateUserPageState extends State<CreateUserPage> {
     DropdownMenuItem<String>(child: Text("Black, Kudan"), value: "Kudan"),
     DropdownMenuItem<String>(child: Text("Black, Judan"), value: "Judan")
   ];
-<<<<<<< HEAD
+
   String _accountType = "Student";
-=======
-  String _coach = "student";
->>>>>>> 9589b379cefbd875233c0e4be7a0e7fe483d1b19
+
 
   InputType inputType = InputType.date;
   @override
@@ -152,7 +150,6 @@ class _CreateUserPageState extends State<CreateUserPage> {
         children: <Widget>[
           RadioListTile<String>(
             title: const Text('Student'),
-<<<<<<< HEAD
             value: "Student",
             groupValue: _accountType,
             onChanged: (value) { setState(() { _accountType = value; }); },
@@ -161,19 +158,9 @@ class _CreateUserPageState extends State<CreateUserPage> {
             title: const Text('Coach'),
             value: "Coach",
             groupValue: _accountType,
-            onChanged: (value) { setState(() { _accountType = value; }); },
-=======
-            value: "student",
-            groupValue: _coach,
-            onChanged: (value) { setState(() { _coach = value; }); },
-          ),
-          RadioListTile<String>(
-            title: const Text('Coach'),
-            value: "coach",
-            groupValue: _coach,
-            onChanged: (value) { setState(() { _coach = value; }); },
->>>>>>> 9589b379cefbd875233c0e4be7a0e7fe483d1b19
-          ),
+            onChanged: (value) { setState(() { _accountType = value; });
+            },
+          )
         ],
       ),
       RaisedButton(
@@ -185,11 +172,10 @@ class _CreateUserPageState extends State<CreateUserPage> {
           child: Text('Create Dojo', style: TextStyle(fontSize: 20)),
           onPressed: moveToCreateDojo,
         ),
-<<<<<<< HEAD
-        visible: _accountType=="Coach",
-=======
-        visible: (_coach == "coach"),
->>>>>>> 9589b379cefbd875233c0e4be7a0e7fe483d1b19
+
+
+        visible: (_accountType == "Coach"),
+
       ),
       FlatButton(
         child: Text('Have an account? Login', style: TextStyle(fontSize: 20.0)),
