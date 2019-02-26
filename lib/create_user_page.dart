@@ -15,6 +15,14 @@ class CreateUserPage extends StatefulWidget {
 
 class _CreateUserPageState extends State<CreateUserPage> {
   final formKey = GlobalKey<FormState>();
+  bool validateAndSave() {
+    final form = formKey.currentState;
+    if (form.validate()) {
+      form.save();
+      return true;
+    }
+    return false;
+  }
   String _email;
   String _password;
   String _firstName;
@@ -61,8 +69,8 @@ class _CreateUserPageState extends State<CreateUserPage> {
             key: formKey,
             child: ListView(
               children: buildInputs()
-            ),
           )
+        ),
       ),
     );
   }
@@ -80,15 +88,17 @@ class _CreateUserPageState extends State<CreateUserPage> {
   }
 
   void moveToJoinDojo() {
-    Navigator.of(context).push(
-        new MaterialPageRoute(
-            builder: (BuildContext context) {
-              return MaterialApp(
-                home: JoinDojoPage(auth: Auth()),
-              );
-            }
-        )
-    );
+    if (validateAndSave()) {
+      Navigator.of(context).push(
+          new MaterialPageRoute(
+              builder: (BuildContext context) {
+                return MaterialApp(
+                  home: JoinDojoPage(auth: Auth()),
+                );
+              }
+          )
+      );
+    }
   }
 
   void moveToLogin() {
