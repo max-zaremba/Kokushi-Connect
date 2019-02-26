@@ -25,10 +25,11 @@ class _JoinDojoPageState extends State<JoinDojoPage> {
             key: formKey,
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   TextFormField(
-                    decoration: InputDecoration(labelText: 'Email'),
-                    validator: (value) => value.isEmpty? 'Email can\'t be empty' : null,
+                    decoration: InputDecoration(labelText: 'Dojo Code'),
+                    validator: (value) => value.isEmpty? 'Dojo Code can\'t be empty' : null,
                     onSaved: (value) => _dojoCode = value,
                   ),
 
