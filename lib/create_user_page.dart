@@ -5,10 +5,12 @@ import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:kokushi_connect/create_dojo_page.dart';
 import 'package:kokushi_connect/join_dojo_page.dart';
 import 'package:kokushi_connect/login_page.dart';
+import 'db_control.dart';
 
 class CreateUserPage extends StatefulWidget {
-  CreateUserPage({this.auth});
+  CreateUserPage({this.auth, this.db});
   final BaseAuth auth;
+  final Database db;
   @override
   State<StatefulWidget> createState() => _CreateUserPageState();
 }
