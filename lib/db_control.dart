@@ -26,11 +26,13 @@ abstract class Database {
   //dojo getters
   Future<String> getDojoName(String dojoId);
   Future<String> getDojoCode(String dojoId);
+  Future<String> getDojoAddress(String dojoId);
   Future<String> getDojoIdByDojoName(String dojoName);
   
   //dojo setters
   Future<void> setDojoCode(String code, String dojoId);
   Future<void> setDojoName(String name, String dojoId);
+  Future<void> setDojoAddress(String address, String dojoId);
 }
 
 class Db implements Database {
@@ -127,6 +129,11 @@ class Db implements Database {
     return document.data['dojoCode'];
   }
 
+  Future<String> getDojoAddress(String dojoId) async {
+    DocumentSnapshot document = await userInfo(dojoId);
+    return document.data['address'];
+  }
+
   Future<String> getDojoIdByDojoName(String dojoName) async {
     //TODO
     return "NOT A KEY";
@@ -138,5 +145,8 @@ class Db implements Database {
   }
   Future<void> setDojoName(String name, String dojoId) async {
     return _firestore.collection("dojos").document(dojoId).setData({ 'dojoName': name});
+  }
+  Future<void> setDojoAddress(String address, String dojoId) async {
+    return _firestore.collection("dojos").document(dojoId).setData({ 'address': address});
   }
 }
