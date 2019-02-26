@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:kokushi_connect/create_user_page.dart';
 import 'auth.dart';
+import 'db_control.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({this.auth, this.onSignedIn});
@@ -10,16 +12,10 @@ class LoginPage extends StatefulWidget {
   State<StatefulWidget> createState() => _LoginPageState();
 }
 
-enum FormType {
-  login,
-  register
-}
-
 class _LoginPageState extends State<LoginPage> {
   final formKey = GlobalKey<FormState>();
   String _email;
   String _password;
-  FormType _formType = FormType.login;
 
   bool validateAndSave() {
     final form = formKey.currentState;
@@ -33,13 +29,8 @@ class _LoginPageState extends State<LoginPage> {
   void validateAndSubmit() async {
     if (validateAndSave()) {
       try {
-        if (_formType == FormType.login) {
-          String userId = await widget.auth.signInWithEmailAndPassword(_email, _password);
-          print('Signed in: $userId');
-        } else {
-          String userId = await widget.auth.createUserWithEmailAndPassword(_email, _password);
-          print('Registered user: $userId');
-        }
+        String userId = await widget.auth.signInWithEmailAndPassword(_email, _password);
+        print('Signed in: $userId');
         widget.onSignedIn();
       }
       catch (e) {
@@ -49,17 +40,15 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void moveToRegister() {
-    formKey.currentState.reset();
-    setState(() {
-      _formType = FormType.register;
-    });
-  }
-
-  void moveToLogin() {
-    formKey.currentState.reset();
-    setState(() {
-      _formType = FormType.login;
-    });
+    Navigator.of(context).push(
+        new MaterialPageRoute(
+            builder: (BuildContext context) {
+              return MaterialApp(
+                home: CreateUserPage(auth: Auth(), db: Db()),
+              );
+            }
+        )
+    );
   }
 
   @override
@@ -99,28 +88,15 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   List<Widget> buildSubmitButtons() {
-    if (_formType == FormType.login) {
-      return [
-        RaisedButton(
-          child: Text('Login', style: TextStyle(fontSize: 20)),
-          onPressed: validateAndSubmit,
-        ),
-        FlatButton(
-          child: Text('Create an account', style: TextStyle(fontSize: 20.0)),
-          onPressed: moveToRegister,
-        )
-      ];
-    } else {
-      return [
-        RaisedButton(
-          child: Text('Create an account', style: TextStyle(fontSize: 20)),
-          onPressed: validateAndSubmit,
-        ),
-        FlatButton(
-          child: Text('Have an account? Login', style: TextStyle(fontSize: 20.0)),
-          onPressed: moveToLogin,
-        )
-      ];
-    }
+    return [
+      RaisedButton(
+        child: Text('Login', style: TextStyle(fontSize: 20)),
+        onPressed: validateAndSubmit,
+      ),
+      FlatButton(
+        child: Text('Create an account', style: TextStyle(fontSize: 20.0)),
+        onPressed: moveToRegister,
+      )
+    ];
   }
 }
