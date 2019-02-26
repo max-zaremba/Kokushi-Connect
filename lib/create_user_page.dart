@@ -17,14 +17,7 @@ class CreateUserPage extends StatefulWidget {
 
 class _CreateUserPageState extends State<CreateUserPage> {
   final formKey = GlobalKey<FormState>();
-  bool validateAndSave() {
-    final form = formKey.currentState;
-    if (form.validate()) {
-      form.save();
-      return true;
-    }
-    return false;
-  }
+
   String _email;
   String _password;
   String _firstName;
@@ -53,11 +46,30 @@ class _CreateUserPageState extends State<CreateUserPage> {
     DropdownMenuItem<String>(child: Text("Black, Kudan"), value: "Kudan"),
     DropdownMenuItem<String>(child: Text("Black, Judan"), value: "Judan")
   ];
-
   String _accountType = "Student";
-
-
   InputType inputType = InputType.date;
+
+  bool validateAndSave() {
+    final form = formKey.currentState;
+    if (form.validate()) {
+      form.save();
+      return true;
+    }
+    return false;
+  }
+
+  void validateAndSubmit() async {
+    if (validateAndSave()) {
+      try {
+        String userId = await widget.auth.createUserWithEmailAndPassword(_email, _password);
+        await widget.db.createAccount(_firstName, _lastName, _dob, _belt, _accountType, userId);
+      }
+      catch (e) {
+        print('Error: $e');
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,6 +90,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
   }
 
   void moveToCreateDojo() {
+    validateAndSubmit();
     Navigator.of(context).push(
         new MaterialPageRoute(
             builder: (BuildContext context) {
@@ -90,6 +103,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
   }
 
   void moveToJoinDojo() {
+    validateAndSubmit();
     if (validateAndSave()) {
       Navigator.of(context).push(
           new MaterialPageRoute(

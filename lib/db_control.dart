@@ -21,7 +21,7 @@ abstract class Database {
   Future<void> setDojoIdForUser(String dojoId, String userId);
   Future<void> setAccountType(String accountType, String userId);
 
-  Future<void> createAccount(String firstName, String lastName, DateTime dob, String rank, String accountType); //creates a new account
+  Future<void> createAccount(String firstName, String lastName, DateTime dob, String rank, String accountType, String userId); //creates a new account
 
   //dojo getters
   Future<String> getDojoName(String dojoId);
@@ -107,8 +107,8 @@ class Db implements Database {
   }
 
   //account creation
-  Future<void> createAccount(String firstName, String lastName, DateTime dob, String rank, String accountType) async {
-    return _firestore.collection("users").document().setData({ 'firstName': firstName, 'lastName': lastName, 'dob': dob, 'rank': rank, 'accountType': accountType });
+  Future<void> createAccount(String firstName, String lastName, DateTime dob, String rank, String accountType, String userId) async {
+    return _firestore.collection("users").document(userId).setData({ 'firstName': firstName, 'lastName': lastName, 'dob': dob, 'rank': rank, 'accountType': accountType });
   }
 
   //gets all dojo information
