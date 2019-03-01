@@ -11,7 +11,6 @@ abstract class Database {
   Future<String> getRank(String userId);
   Future<String> getDojoIdByUserId(String userId);
   Future<String> getAccountType(String userId);
-  Future<String> getUserDojo(String userId);
 
   //user setters
   Future<void> setFirstName(String firstName, String userId);
@@ -21,7 +20,6 @@ abstract class Database {
   Future<void> setRank(String rank, String userId);
   Future<void> setDojoIdForUser(String dojoId, String userId);
   Future<void> setAccountType(String accountType, String userId);
-  Future<void> setUserDojo(String dojo, String userId);
 
   Future<void> createAccount(String firstName, String lastName, DateTime dob, String rank, String accountType, String userId); //creates a new account
 
@@ -79,11 +77,6 @@ class Db implements Database {
     return document.data['accountType'];
   }
 
-  Future<String> getUserDojo(String userId) async {
-    DocumentSnapshot document = await userInfo(userId);
-    return document.data['dojo'];
-  }
-
   //setters for users
   Future<void> setFirstName(String firstName, String userId) async {
     return _firestore.collection("users").document(userId).setData({ 'firstName': firstName});
@@ -113,13 +106,9 @@ class Db implements Database {
     return _firestore.collection("users").document(userId).setData({ 'accountType': accountType});
   }
 
-  Future<void> setUserDojo(String dojo, String userId) async {
-    return _firestore.collection("users").document(userId).setData({ 'dojo': dojo});
-  }
-
   //account creation
   Future<void> createAccount(String firstName, String lastName, DateTime dob, String rank, String accountType, String userId) async {
-    return _firestore.collection("users").document(userId).setData({ 'firstName': firstName, 'lastName': lastName, 'dob': dob, 'rank': rank, 'accountType': accountType, 'dojo': null });
+    return _firestore.collection("users").document(userId).setData({ 'firstName': firstName, 'lastName': lastName, 'dob': dob, 'rank': rank, 'accountType': accountType });
   }
 
   //gets all dojo information

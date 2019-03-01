@@ -11,7 +11,6 @@ class CreateUserPage extends StatefulWidget {
   CreateUserPage({this.auth, this.db});
   final BaseAuth auth;
   final Database db;
-
   @override
   State<StatefulWidget> createState() => _CreateUserPageState();
 }

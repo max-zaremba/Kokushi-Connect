@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kokushi_connect/auth.dart';
-import 'db_control.dart';
-import 'custom_app_bar.dart';
-import 'root_page.dart';
-import 'globals.dart';
 
 class JoinDojoPage extends StatefulWidget {
-  JoinDojoPage({this.auth, this.db});
+  JoinDojoPage({this.auth});
   final BaseAuth auth;
-  final Database db;
-
   @override
   State<StatefulWidget> createState() => _JoinDojoPageState();
 }
@@ -18,14 +12,11 @@ class JoinDojoPage extends StatefulWidget {
 class _JoinDojoPageState extends State<JoinDojoPage> {
   final formKey = GlobalKey<FormState>();
   String _dojoCode;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
+      appBar: AppBar(
         title: Text('Join Dojo'),
-        context: context,
-        auth: widget.auth,
       ),
 
       body: Container(
