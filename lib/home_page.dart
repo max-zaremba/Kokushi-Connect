@@ -1,31 +1,19 @@
 import 'package:flutter/material.dart';
 import 'auth.dart';
+import 'custom_app_bar.dart';
+import 'root_page.dart';
 
 class HomePage extends StatelessWidget {
-  HomePage({this.auth, this.onSignedOut});
+  HomePage({this.auth});
   final BaseAuth auth;
-  final VoidCallback onSignedOut;
-
-  void _signOut() async {
-    try {
-      await auth.signOut();
-      onSignedOut();
-    } catch (e) {
-      print(e);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: CustomAppBar(
         title: Text('Welcome'),
-        actions: <Widget>[
-          FlatButton(
-            child: Text('Logout', style: TextStyle(fontSize: 17.0, color: Colors.white)),
-            onPressed: _signOut,
-          )
-        ],
+        context: context,
+        auth: auth,
       ),
       body: Container(
         child: Center(
