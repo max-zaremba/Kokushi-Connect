@@ -18,10 +18,53 @@ class HomePage extends StatelessWidget {
         db: db,
       ),
       body: Container(
-        child: Center(
-          child: Text('Welcome', style: TextStyle(fontSize: 32.0))
-        ),
+        child: dock,
       ),
     );
+
   }
+  Widget dock = Column(
+    mainAxisAlignment: MainAxisAlignment.end,
+    children: [Row (
+      children: [
+        Column(
+          children: [
+            Icon(Icons.calendar_today, size: 48,),
+            Text("Calendar"),
+          ],
+        ),
+        Column(
+          children: [
+            Icon(Icons.check_box, size: 48,),
+            Text("Attendence")
+          ],
+        ),
+        Column(
+          children: [
+            Icon(Icons.note, size: 48,),
+            Text("Notes")
+          ],
+        ),
+        Column(
+          children: [
+            Icon(Icons.message, size: 48,),
+            Text("Messages")
+          ],
+        ),
+        Column(
+          children: [
+            Icon(Icons.info, size: 48,),
+            Text("Info")
+          ],
+        ),
+        Column(
+          children: [
+            Icon(Icons.settings, size: 48,),
+            Text("Settings"),
+          ],
+        ),
+      ],
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    )]
+  );
 }
