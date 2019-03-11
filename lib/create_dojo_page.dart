@@ -34,28 +34,28 @@ class _CreateDojoPageState extends State<CreateDojoPage> {
   } 
 
   void validateAndSubmit() {
-    if (validateAndSave()) {
-      try {
-        createDojo(_dojoName, _address, _dojocode);
-      }
-      catch (e) {
-        print('Error: $e');
-      }
+    try {
+      createDojo(_dojoName, _address, _dojocode);
+    }
+    catch (e) {
+      print('Error: $e');
     }
   }
 
   void moveToHomePage() {
-    validateAndSubmit();
-    Navigator.of(context).push(
-        new MaterialPageRoute(
-            builder: (BuildContext context) {
-              return MaterialApp(
-                //TODO CreateHomePage
-                home: CreateDojoPage(auth: Auth(), db: Db()),
-              );
-            }
-        )
-    );
+    if (validateAndSave()) {
+      validateAndSubmit();
+      Navigator.of(context).push(
+          new MaterialPageRoute(
+              builder: (BuildContext context) {
+                return MaterialApp(
+                  //TODO CreateHomePage
+                  home: CreateDojoPage(auth: Auth(), db: Db()),
+                );
+              }
+          )
+      );
+    }
   }
 
   @override

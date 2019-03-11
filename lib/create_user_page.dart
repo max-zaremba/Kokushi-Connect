@@ -60,14 +60,12 @@ class _CreateUserPageState extends State<CreateUserPage> {
   }
 
   void validateAndSubmit() async {
-    if (validateAndSave()) {
-      try {
-        String userId = await widget.auth.createUserWithEmailAndPassword(_email, _password);
-        await widget.db.createAccount(_firstName, _lastName, _dob, _belt, _accountType, userId);
-      }
-      catch (e) {
-        print('Error: $e');
-      }
+    try {
+      String userId = await widget.auth.createUserWithEmailAndPassword(_email, _password);
+      await widget.db.createAccount(_firstName, _lastName, _dob, _belt, _accountType, userId);
+    }
+    catch (e) {
+      print('Error: $e');
     }
   }
 
@@ -91,21 +89,23 @@ class _CreateUserPageState extends State<CreateUserPage> {
   }
 
   void moveToCreateDojo() {
-    validateAndSubmit();
-    Navigator.of(context).push(
-        new MaterialPageRoute(
-            builder: (BuildContext context) {
-              return MaterialApp(
-                home: CreateDojoPage(auth: widget.auth, db: widget.db),
-              );
-            }
-        )
-    );
+    if (validateAndSave()) {
+      validateAndSubmit();
+      Navigator.of(context).push(
+          new MaterialPageRoute(
+              builder: (BuildContext context) {
+                return MaterialApp(
+                  home: CreateDojoPage(auth: widget.auth, db: widget.db),
+                );
+              }
+          )
+      );
+    }
   }
 
   void moveToJoinDojo() {
-    validateAndSubmit();
     if (validateAndSave()) {
+      validateAndSubmit();
       Navigator.of(context).push(
           new MaterialPageRoute(
               builder: (BuildContext context) {
