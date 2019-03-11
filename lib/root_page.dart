@@ -1,60 +1,56 @@
 import 'package:flutter/material.dart';
 import 'login_page.dart';
 import 'auth.dart';
-import 'home_page.dart';
 import 'db_control.dart';
-import 'create_account.dart';
+import 'home_page.dart';
+import 'globals.dart' as globals;
+import 'join_dojo_page.dart';
 
 class RootPage extends StatefulWidget {
-  RootPage({this.auth});
+  RootPage({this.auth, this.db});
   final BaseAuth auth;
+  final Database db;
+
   @override
   State<StatefulWidget> createState() => _RootPageState();
 }
 
-enum AuthStatus {
-  notSignedIn,
-  signedIn
-}
-
 class _RootPageState extends State<RootPage> {
-  AuthStatus authStatus = AuthStatus.notSignedIn;
-
   @override
   void initState() {
     super.initState();
     widget.auth.currentUser().then((userId) {
       setState(() {
-        authStatus = userId == null ? AuthStatus.notSignedIn : AuthStatus.signedIn;
+        globals.authStatus = userId == null ? globals.AuthStatus.notSignedIn : globals.AuthStatus.signedIn;
       });
     });
   }
 
   void _signedIn() {
     setState(() {
-      authStatus = AuthStatus.signedIn;
-    });
-  }
-
-  void _signedOut() {
-    setState(() {
-      authStatus = AuthStatus.notSignedIn;
+      globals.authStatus = globals.AuthStatus.signedIn;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    switch (authStatus) {
-      case AuthStatus.notSignedIn:
+    switch (globals.authStatus) {
+      case globals.AuthStatus.notSignedIn:
         return LoginPage(
           auth: widget.auth,
           onSignedIn: _signedIn,
         );
-      case AuthStatus.signedIn:
-        return HomePage(
-          auth: widget.auth,
-          onSignedOut: _signedOut,
-        );
+      case globals.AuthStatus.signedIn:
+        if (globals.hasDojo) {
+          return HomePage(
+            auth: widget.auth,
+          );
+        } else {
+          return JoinDojoPage(
+            auth: widget.auth,
+            db: Db(),
+          );
+        }
     }
   }
 }
