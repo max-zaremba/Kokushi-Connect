@@ -96,7 +96,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
         new MaterialPageRoute(
             builder: (BuildContext context) {
               return MaterialApp(
-                home: CreateDojoPage(auth: Auth()),
+                home: CreateDojoPage(auth: Auth(), db: Db()),
               );
             }
         )

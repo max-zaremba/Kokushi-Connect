@@ -19,6 +19,45 @@ class _CreateDojoPageState extends State<CreateDojoPage> {
   String _dojoName;
   String _address;
   String _dojocode;
+
+  bool validateAndSave() {
+    final form = formKey.currentState;
+    if (form.validate()) {
+      form.save();
+      return true;
+    }
+    return false;
+  }
+
+  void createDojo(String _dojoName, String _address, String _dojocode) async {
+    await widget.db.createDojo(_dojoName, _address, _dojocode);
+  } 
+
+  void validateAndSubmit() {
+    if (validateAndSave()) {
+      try {
+        createDojo(_dojoName, _address, _dojocode);
+      }
+      catch (e) {
+        print('Error: $e');
+      }
+    }
+  }
+
+  void moveToHomePage() {
+    validateAndSubmit();
+    Navigator.of(context).push(
+        new MaterialPageRoute(
+            builder: (BuildContext context) {
+              return MaterialApp(
+                //TODO CreateHomePage
+                home: CreateDojoPage(auth: Auth(), db: Db()),
+              );
+            }
+        )
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,7 +98,7 @@ class _CreateDojoPageState extends State<CreateDojoPage> {
 
                   RaisedButton(
                     child: Text('Create Dojo', style: TextStyle(fontSize: 20)),
-                    onPressed: null,
+                    onPressed: moveToHomePage,
                   ),
                 ]
             ),
@@ -67,5 +106,4 @@ class _CreateDojoPageState extends State<CreateDojoPage> {
       ),
     );
   }
-
 }
