@@ -4,7 +4,7 @@ import 'package:kokushi_connect/auth.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:kokushi_connect/create_dojo_page.dart';
 import 'package:kokushi_connect/join_dojo_page.dart';
-import 'package:kokushi_connect/login_page.dart';
+import 'root_page.dart';
 import 'db_control.dart';
 
 class CreateUserPage extends StatefulWidget {
@@ -96,7 +96,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
         new MaterialPageRoute(
             builder: (BuildContext context) {
               return MaterialApp(
-                home: CreateDojoPage(auth: Auth(), db: Db()),
+                home: CreateDojoPage(auth: widget.auth, db: widget.db),
               );
             }
         )
@@ -110,7 +110,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
           new MaterialPageRoute(
               builder: (BuildContext context) {
                 return MaterialApp(
-                  home: JoinDojoPage(auth: Auth()),
+                  home: JoinDojoPage(auth: widget.auth),
                 );
               }
           )
@@ -123,7 +123,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
         new MaterialPageRoute(
             builder: (BuildContext context) {
               return MaterialApp(
-                home: LoginPage(auth: Auth()),
+                home: RootPage(auth: widget.auth, db: widget.db,),
               );
             }
         )

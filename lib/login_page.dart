@@ -44,7 +44,7 @@ class _LoginPageState extends State<LoginPage> {
         new MaterialPageRoute(
             builder: (BuildContext context) {
               return MaterialApp(
-                home: CreateUserPage(auth: Auth(), db: Db()),
+                home: CreateUserPage(auth: widget.auth, db: Db()),
               );
             }
         )

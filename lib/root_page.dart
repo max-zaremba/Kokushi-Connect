@@ -29,6 +29,7 @@ class _RootPageState extends State<RootPage> {
   void _signedIn() {
     setState(() {
       globals.authStatus = globals.AuthStatus.signedIn;
+      print("this happened");
     });
   }
 
@@ -42,10 +43,12 @@ class _RootPageState extends State<RootPage> {
         );
       case globals.AuthStatus.signedIn:
         if (globals.hasDojo) {
+          print("SIGNED THE FUCK IN");
           return HomePage(
             auth: widget.auth,
           );
         } else {
+          print("SIGNED TEH FUCK IN");
           return JoinDojoPage(
             auth: widget.auth,
             db: Db(),

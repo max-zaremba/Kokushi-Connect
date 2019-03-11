@@ -11,7 +11,7 @@ class CustomAppBar extends AppBar {
         onPressed: () async {
           try {
             await auth.signOut();
-            globals.authStatus = globals.AuthStatus.signedIn;
+            globals.authStatus = globals.AuthStatus.notSignedIn;
           } catch (e) {
 
           }
