@@ -21,26 +21,23 @@ abstract class Database {
   Future<void> setRank(String rank, String userId);
   Future<void> setDojoIdForUser(String dojoId, String userId);
   Future<void> setAccountType(String accountType, String userId);
-  Future<void> setUserDojo(String dojo, String userId);
+  Future<void> setUserDojo(String dojoId, String userId);
 
   //create
-<<<<<<< Updated upstream
   Future<void> createDojo(String dojoName, String address, String dojoCode);
-=======
-  String createDojo();
->>>>>>> Stashed changes
   Future<void> createAccount(String firstName, String lastName, DateTime dob, String rank, String accountType, String userId); //creates a new account
 
   //dojo getters
   Future<String> getDojoName(String dojoId);
   Future<String> getDojoCode(String dojoId);
   Future<String> getDojoAddress(String dojoId);
-  Future<String> getDojoIdByDojoName(String dojoName);
+  Future<String> getDojoIdByDojoCode(String dojoCode);
   
   //dojo setters
   Future<void> setDojoCode(String code, String dojoId);
   Future<void> setDojoName(String name, String dojoId);
   Future<void> setDojoAddress(String address, String dojoId);
+  Future<void> addMemberToDojo(String userId, String dojoId);
 }
 
 class Db implements Database {
@@ -121,24 +118,18 @@ class Db implements Database {
     return _firestore.collection("users").document(userId).updateData({ 'accountType': accountType});
   }
 
-<<<<<<< Updated upstream
-  Future<void> setUserDojo(String dojo, String userId) async {
-    return _firestore.collection("users").document(userId).updateData({ 'dojo': dojo});
+  Future<void> setUserDojo(String dojoId, String userId) async {
+    await addMemberToDojo(userId, dojoId);
+    return _firestore.collection("users").document(userId).updateData({ 'dojoId': dojoId });
   }
 
-=======
->>>>>>> Stashed changes
   //account and dojo creation
   Future<void> createAccount(String firstName, String lastName, DateTime dob, String rank, String accountType, String userId) async {
-    return _firestore.collection("users").document(userId).setData({ 'firstName': firstName, 'lastName': lastName, 'dob': dob, 'rank': rank, 'accountType': accountType, 'dojo': null });
+    return _firestore.collection("users").document(userId).setData({ 'firstName': firstName, 'lastName': lastName, 'dob': dob, 'rank': rank, 'accountType': accountType, 'dojoId': null });
   }
 
   Future<void> createDojo(String dojoName, String address, String dojoCode){
     return _firestore.collection("dojos").document().setData({'dojoName' : dojoName, 'address' : address, 'dojoCode' : dojoCode});
-  }
-
-  String createDojo(){
-
   }
 
   //gets all dojo information
@@ -161,10 +152,15 @@ class Db implements Database {
     DocumentSnapshot document = await userInfo(dojoId);
     return document.data['address'];
   }
-
-  Future<String> getDojoIdByDojoName(String dojoName) async {
-    //TODO
-    return "NOT A KEY";
+  
+  Future<String> getDojoIdByDojoCode(String dojoCode) async {
+    try {
+      QuerySnapshot documents = await _firestore.collection('dojos').where(
+          'dojoCode', isEqualTo: dojoCode).getDocuments();
+      return documents.documents.first.documentID;
+    } catch (e) {
+      return null;
+    }
   }
 
   //setters for dojo
@@ -177,4 +173,9 @@ class Db implements Database {
   Future<void> setDojoAddress(String address, String dojoId) async {
     return _firestore.collection("dojos").document(dojoId).updateData({ 'address': address});
   }
+
+  Future<void> addMemberToDojo(String userId, String dojoId) {
+    return _firestore.collection("dojos").document(dojoId).collection("members").add({ userId : true });
+  }
+
 }

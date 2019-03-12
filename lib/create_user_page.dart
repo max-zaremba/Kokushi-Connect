@@ -89,7 +89,6 @@ class _CreateUserPageState extends State<CreateUserPage> {
   }
 
   void moveToCreateDojo() {
-<<<<<<< Updated upstream
     if (validateAndSave()) {
       validateAndSubmit();
       Navigator.of(context).push(
@@ -102,18 +101,6 @@ class _CreateUserPageState extends State<CreateUserPage> {
           )
       );
     }
-=======
-    validateAndSubmit();
-    Navigator.of(context).push(
-        new MaterialPageRoute(
-            builder: (BuildContext context) {
-              return MaterialApp(
-                home: CreateDojoPage(auth: Auth(), db: Db()),
-              );
-            }
-        )
-    );
->>>>>>> Stashed changes
   }
 
   void moveToJoinDojo() {
@@ -123,7 +110,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
           new MaterialPageRoute(
               builder: (BuildContext context) {
                 return MaterialApp(
-                  home: JoinDojoPage(auth: widget.auth),
+                  home: JoinDojoPage(auth: widget.auth, db: widget.db),
                 );
               }
           )

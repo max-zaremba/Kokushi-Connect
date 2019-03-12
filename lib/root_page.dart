@@ -16,6 +16,8 @@ class RootPage extends StatefulWidget {
 }
 
 class _RootPageState extends State<RootPage> {
+  bool hasDojo = false;
+
   @override
   void initState() {
     super.initState();
@@ -23,14 +25,24 @@ class _RootPageState extends State<RootPage> {
       setState(() {
         globals.authStatus = userId == null ? globals.AuthStatus.notSignedIn : globals.AuthStatus.signedIn;
       });
+      doesHaveDojo();
     });
+  }
+
+  void doesHaveDojo() async {
+    String userId = await widget.auth.currentUser();
+    if (userId != null && await widget.db.getUserDojo(userId) != null) {
+      hasDojo = true;
+    } else {
+      hasDojo = false;
+    }
   }
 
   void _signedIn() {
     setState(() {
       globals.authStatus = globals.AuthStatus.signedIn;
-      print("this happened");
     });
+    doesHaveDojo();
   }
 
   @override
@@ -42,16 +54,15 @@ class _RootPageState extends State<RootPage> {
           onSignedIn: _signedIn,
         );
       case globals.AuthStatus.signedIn:
-        if (globals.hasDojo) {
-          print("SIGNED THE FUCK IN");
+        if (hasDojo) {
           return HomePage(
             auth: widget.auth,
+            db: widget.db,
           );
         } else {
-          print("SIGNED TEH FUCK IN");
           return JoinDojoPage(
             auth: widget.auth,
-            db: Db(),
+            db: widget.db,
           );
         }
     }

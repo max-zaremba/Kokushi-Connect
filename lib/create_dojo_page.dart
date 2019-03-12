@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kokushi_connect/auth.dart';
-<<<<<<< Updated upstream
 import 'custom_app_bar.dart';
 import 'db_control.dart';
 import 'root_page.dart';
-=======
-import 'db_control.dart';
->>>>>>> Stashed changes
 
 class CreateDojoPage extends StatefulWidget {
   CreateDojoPage({this.auth, this.db});
@@ -33,7 +29,6 @@ class _CreateDojoPageState extends State<CreateDojoPage> {
     return false;
   }
 
-<<<<<<< Updated upstream
   void createDojo(String _dojoName, String _address, String _dojocode) async {
     await widget.db.createDojo(_dojoName, _address, _dojocode);
   } 
@@ -44,28 +39,10 @@ class _CreateDojoPageState extends State<CreateDojoPage> {
     }
     catch (e) {
       print('Error: $e');
-=======
-  void createDojo(String _dojoName, String _address, String _dojocode){
-    String dojoId = widget.db.createDojo();
-    widget.db.setDojoName(_dojoName, dojoId);
-    widget.db.setDojoAddress(_address, dojoId);
-    widget.db.setDojoCode(_dojocode, dojoId);
-  } 
-
-  void validateAndSubmit() async {
-    if (validateAndSave()) {
-      try {
-        await createDojo(_dojoName, _address, _dojocode);
-      }
-      catch (e) {
-        print('Error: $e');
-      }
->>>>>>> Stashed changes
     }
   }
 
   void moveToHomePage() {
-<<<<<<< Updated upstream
     if (validateAndSave()) {
       validateAndSubmit();
       Navigator.of(context).push(
@@ -73,25 +50,12 @@ class _CreateDojoPageState extends State<CreateDojoPage> {
               builder: (BuildContext context) {
                 return MaterialApp(
                   //TODO CreateHomePage
-                  home: CreateDojoPage(auth: Auth(), db: Db()),
+                  home: CreateDojoPage(auth: widget.auth, db: widget.db),
                 );
               }
           )
       );
     }
-=======
-    validateAndSubmit();
-    Navigator.of(context).push(
-        new MaterialPageRoute(
-            builder: (BuildContext context) {
-              return MaterialApp(
-                //TODO CreateHomePage
-                home: CreateDojoPage(auth: Auth(), db: Db()),
-              );
-            }
-        )
-    );
->>>>>>> Stashed changes
   }
 
   @override
@@ -101,6 +65,7 @@ class _CreateDojoPageState extends State<CreateDojoPage> {
         title: Text('Create Dojo'),
         context: context,
         auth: widget.auth,
+        db: widget.db,
       ),
 
       body: Container(
@@ -131,14 +96,9 @@ class _CreateDojoPageState extends State<CreateDojoPage> {
                     },
                     onSaved: (value) => _dojocode = value,
                   ),
-
                   RaisedButton(
                     child: Text('Create Dojo', style: TextStyle(fontSize: 20)),
-<<<<<<< Updated upstream
                     onPressed: moveToHomePage,
-=======
-                    onPressed: moveToHomePage(),
->>>>>>> Stashed changes
                   ),
                 ]
             ),

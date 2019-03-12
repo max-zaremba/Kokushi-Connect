@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'auth.dart';
+import 'db_control.dart';
 import 'custom_app_bar.dart';
-import 'root_page.dart';
 
 class HomePage extends StatelessWidget {
-  HomePage({this.auth});
+  HomePage({this.auth, this.db});
   final BaseAuth auth;
+  final Database db;
 
   @override
   Widget build(BuildContext context) {
@@ -14,6 +15,7 @@ class HomePage extends StatelessWidget {
         title: Text('Welcome'),
         context: context,
         auth: auth,
+        db: db,
       ),
       body: Container(
         child: Center(
