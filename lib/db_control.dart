@@ -90,35 +90,35 @@ class Db implements Database {
 
   //setters for users
   Future<void> setFirstName(String firstName, String userId) async {
-    return _firestore.collection("users").document(userId).setData({ 'firstName': firstName});
+    return _firestore.collection("users").document(userId).updateData({ 'firstName': firstName});
   }
 
   Future<void> setLastName(String lastName, String userId) async {
-    return _firestore.collection("users").document(userId).setData({ 'lastName': lastName});
+    return _firestore.collection("users").document(userId).updateData({ 'lastName': lastName});
   }
 
   Future<void> setEmail(String email, String userId) async {
-    return _firestore.collection("users").document(userId).setData({ 'email': email});
+    return _firestore.collection("users").document(userId).updateData({ 'email': email});
   }
 
   Future<void> setDOB(DateTime dob, String userId) async{
-    return _firestore.collection("users").document(userId).setData({ 'dob': dob});
+    return _firestore.collection("users").document(userId).updateData({ 'dob': dob});
   }
 
   Future<void> setRank(String rank, String userId) async {
-    return _firestore.collection("users").document(userId).setData({ 'rank': rank});
+    return _firestore.collection("users").document(userId).updateData({ 'rank': rank});
   }
 
   Future<void> setDojoIdForUser(String dojoId, String userId) async {
-    return _firestore.collection("users").document(userId).setData({ 'dojoId': dojoId});
+    return _firestore.collection("users").document(userId).updateData({ 'dojoId': dojoId});
   }
 
   Future<void> setAccountType(String accountType, String userId){
-    return _firestore.collection("users").document(userId).setData({ 'accountType': accountType});
+    return _firestore.collection("users").document(userId).updateData({ 'accountType': accountType});
   }
 
   Future<void> setUserDojo(String dojo, String userId) async {
-    return _firestore.collection("users").document(userId).setData({ 'dojo': dojo});
+    return _firestore.collection("users").document(userId).updateData({ 'dojo': dojo});
   }
 
   //account and dojo creation
@@ -158,12 +158,12 @@ class Db implements Database {
 
   //setters for dojo
   Future<void> setDojoCode(String code, String dojoId) async {
-    return _firestore.collection("dojos").document(dojoId).setData({ 'dojoCode': code});
+    return _firestore.collection("dojos").document(dojoId).updateData({ 'dojoCode': code});
   }
   Future<void> setDojoName(String name, String dojoId) async {
-    return _firestore.collection("dojos").document(dojoId).setData({ 'dojoName': name});
+    return _firestore.collection("dojos").document(dojoId).updateData({ 'dojoName': name});
   }
   Future<void> setDojoAddress(String address, String dojoId) async {
-    return _firestore.collection("dojos").document(dojoId).setData({ 'address': address});
+    return _firestore.collection("dojos").document(dojoId).updateData({ 'address': address});
   }
 }
