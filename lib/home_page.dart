@@ -55,7 +55,7 @@ class _HomePageState extends State<HomePage> {
     }
     List<ListTile> events = new List(12);
     events[0] = new ListTile(
-      title: Text("Events:", style: title,),
+      title: Text("Upcoming Events:", style: title,),
     );
     events[1] = new ListTile(
       title: Text("June 7, 2019", style: date,),
@@ -77,6 +77,17 @@ class _HomePageState extends State<HomePage> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
+        Column(
+          children: [
+            IconButton(
+                icon: Icon(Icons.home),
+                onPressed: null,
+                alignment: Alignment.center,
+                iconSize: 36
+            ),
+            Text("Home")
+          ],
+        ),
         Column(
           children: [
             IconButton(
@@ -119,17 +130,6 @@ class _HomePageState extends State<HomePage> {
                 iconSize: 36
             ),
             Text("Messages")
-          ],
-        ),
-        Column(
-          children: [
-            IconButton(
-                icon: Icon(Icons.info),
-                onPressed: null,
-                alignment: Alignment.center,
-                iconSize: 36
-            ),
-            Text("Info")
           ],
         ),
         Column(
