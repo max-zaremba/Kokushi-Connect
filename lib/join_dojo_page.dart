@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:kokushi_connect/auth.dart';
 import 'db_control.dart';
 import 'custom_app_bar.dart';
-import 'globals.dart' as globals;
 import 'home_page.dart';
 
 class JoinDojoPage extends StatefulWidget {
@@ -32,7 +31,6 @@ class _JoinDojoPageState extends State<JoinDojoPage> {
 
   void validateAndSubmit() async {
     try {
-      print(widget.db);
       String dojoId = await widget.db.getDojoIdByDojoCode(_dojoCode);
       if (dojoId != null) {
         dojoExists = true;

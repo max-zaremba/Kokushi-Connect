@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:kokushi_connect/auth.dart';
 import 'custom_app_bar.dart';
 import 'db_control.dart';
-import 'root_page.dart';
 
 class CreateDojoPage extends StatefulWidget {
   CreateDojoPage({this.auth, this.db});

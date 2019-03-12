@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'auth.dart';
 import 'dart:async';
 
 abstract class Database {
