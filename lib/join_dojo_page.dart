@@ -3,6 +3,7 @@ import 'package:kokushi_connect/auth.dart';
 import 'db_control.dart';
 import 'custom_app_bar.dart';
 import 'home_page.dart';
+import 'create_dojo_page.dart';
 
 class JoinDojoPage extends StatefulWidget {
   JoinDojoPage({this.auth, this.db});
@@ -18,7 +19,26 @@ class JoinDojoPage extends StatefulWidget {
 class _JoinDojoPageState extends State<JoinDojoPage> {
   final formKey = GlobalKey<FormState>();
   String _dojoCode;
+  bool _visible = false;
   bool dojoExists = false;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.auth.currentUser().then((userId) {
+      widget.db.getAccountType(userId).then((accountType) {
+        if (accountType == "Coach") {
+          setState(() {
+            _visible = true;
+          });
+        } else {
+          setState(() {
+            _visible = false;
+          });
+        }
+      });
+    });
+  }
 
   bool validateAndSave() {
     final form = formKey.currentState;
@@ -51,7 +71,7 @@ class _JoinDojoPageState extends State<JoinDojoPage> {
                 builder: (BuildContext context) {
                   return MaterialApp(
                     //TODO CreateHomePage
-                    home: HomePage(auth: widget.auth),
+                    home: HomePage(auth: widget.auth, db: widget.db,),
                   );
                 }
             )
@@ -60,6 +80,17 @@ class _JoinDojoPageState extends State<JoinDojoPage> {
     }
   }
 
+  void moveToCreateDojo() {
+    Navigator.of(context).push(
+        new MaterialPageRoute(
+            builder: (BuildContext context) {
+              return MaterialApp(
+                home: CreateDojoPage(auth: widget.auth, db: widget.db,),
+              );
+            }
+        )
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,6 +119,13 @@ class _JoinDojoPageState extends State<JoinDojoPage> {
                   RaisedButton(
                     child: Text('Join Dojo', style: TextStyle(fontSize: 20)),
                     onPressed: joinDojo,
+                  ),
+                  Visibility(
+                    visible: (_visible),
+                    child: FlatButton(
+                      child: Text('Create Dojo', style: TextStyle(fontSize: 20)),
+                      onPressed: moveToCreateDojo,
+                    ),
                   ),
                 ]
             ),

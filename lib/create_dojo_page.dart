@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:kokushi_connect/auth.dart';
 import 'custom_app_bar.dart';
 import 'db_control.dart';
+import 'join_dojo_page.dart';
+import 'home_page.dart';
 
 class CreateDojoPage extends StatefulWidget {
   CreateDojoPage({this.auth, this.db});
@@ -29,6 +31,8 @@ class _CreateDojoPageState extends State<CreateDojoPage> {
 
   void createDojo(String _dojoName, String _address, String _dojocode) async {
     await widget.db.createDojo(_dojoName, _address, _dojocode);
+    String dojoId = await widget.db.getDojoIdByDojoCode(_dojocode);
+    await widget.db.setUserDojo(dojoId, await widget.auth.currentUser());
   } 
 
   void validateAndSubmit() {
@@ -48,12 +52,25 @@ class _CreateDojoPageState extends State<CreateDojoPage> {
               builder: (BuildContext context) {
                 return MaterialApp(
                   //TODO CreateHomePage
-                  home: CreateDojoPage(auth: widget.auth, db: widget.db),
+                  home: HomePage(auth: widget.auth, db: widget.db),
                 );
               }
           )
       );
     }
+  }
+
+  void moveToJoinDojoPage() {
+    Navigator.of(context).push(
+        new MaterialPageRoute(
+            builder: (BuildContext context) {
+              return MaterialApp(
+                //TODO CreateHomePage
+                home: JoinDojoPage(auth: widget.auth, db: widget.db),
+              );
+            }
+        )
+    );
   }
 
   @override
@@ -97,6 +114,10 @@ class _CreateDojoPageState extends State<CreateDojoPage> {
                   RaisedButton(
                     child: Text('Create Dojo', style: TextStyle(fontSize: 20)),
                     onPressed: moveToHomePage,
+                  ),
+                  FlatButton(
+                    child: Text('Join Dojo', style: TextStyle(fontSize: 20)),
+                    onPressed: moveToJoinDojoPage,
                   ),
                 ]
             ),

@@ -199,10 +199,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
           child: Text('Create Dojo', style: TextStyle(fontSize: 20)),
           onPressed: moveToCreateDojo,
         ),
-
-
         visible: (_accountType == "Coach"),
-
       ),
       FlatButton(
         child: Text('Have an account? Login', style: TextStyle(fontSize: 20.0)),

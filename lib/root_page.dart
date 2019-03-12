@@ -16,7 +16,7 @@ class RootPage extends StatefulWidget {
 }
 
 class _RootPageState extends State<RootPage> {
-  bool hasDojo = false;
+  bool _hasDojo = false;
 
   @override
   void initState() {
@@ -29,20 +29,23 @@ class _RootPageState extends State<RootPage> {
     });
   }
 
-  void doesHaveDojo() async {
+  Future<void> doesHaveDojo() async {
     String userId = await widget.auth.currentUser();
-    if (userId != null && await widget.db.getUserDojo(userId) != null) {
-      hasDojo = true;
-    } else {
-      hasDojo = false;
+    if (userId != null) {
+      String dojoId = await widget.db.getUserDojo(userId);
+      if (dojoId != null) {
+        _hasDojo = true;
+      } else {
+        _hasDojo = false;
+      }
     }
   }
 
-  void _signedIn() {
+  void _signedIn() async {
+    await doesHaveDojo();
     setState(() {
       globals.authStatus = globals.AuthStatus.signedIn;
     });
-    doesHaveDojo();
   }
 
   @override
@@ -51,10 +54,11 @@ class _RootPageState extends State<RootPage> {
       case globals.AuthStatus.notSignedIn:
         return LoginPage(
           auth: widget.auth,
+          db: widget.db,
           onSignedIn: _signedIn,
         );
       case globals.AuthStatus.signedIn:
-        if (hasDojo) {
+        if (_hasDojo) {
           return HomePage(
             auth: widget.auth,
             db: widget.db,

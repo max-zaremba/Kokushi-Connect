@@ -85,7 +85,7 @@ class Db implements Database {
 
   Future<String> getUserDojo(String userId) async {
     DocumentSnapshot document = await userInfo(userId);
-    return document.data['dojo'];
+    return document.data['dojoId'];
   }
 
   //setters for users
@@ -127,8 +127,10 @@ class Db implements Database {
     return _firestore.collection("users").document(userId).setData({ 'firstName': firstName, 'lastName': lastName, 'dob': dob, 'rank': rank, 'accountType': accountType, 'dojoId': null });
   }
 
-  Future<void> createDojo(String dojoName, String address, String dojoCode){
-    return _firestore.collection("dojos").document().setData({'dojoName' : dojoName, 'address' : address, 'dojoCode' : dojoCode});
+  Future<String> createDojo(String dojoName, String address, String dojoCode) async {
+    _firestore.collection("dojos").document().setData({'dojoName' : dojoName, 'address' : address, 'dojoCode' : dojoCode});
+    String dojoId = await getDojoIdByDojoCode(dojoCode);
+    return dojoId;
   }
 
   //gets all dojo information

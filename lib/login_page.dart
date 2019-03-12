@@ -4,8 +4,9 @@ import 'auth.dart';
 import 'db_control.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage({this.auth, this.onSignedIn});
+  LoginPage({this.auth, this.db, this.onSignedIn});
   final BaseAuth auth;
+  final Database db;
   final VoidCallback onSignedIn;
 
   @override
@@ -44,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
         new MaterialPageRoute(
             builder: (BuildContext context) {
               return MaterialApp(
-                home: CreateUserPage(auth: widget.auth, db: Db()),
+                home: CreateUserPage(auth: widget.auth, db: widget.db),
               );
             }
         )
