@@ -20,7 +20,6 @@ class _JoinDojoPageState extends State<JoinDojoPage> {
   final formKey = GlobalKey<FormState>();
   String _dojoCode;
   bool _visible = false;
-  bool dojoExists = false;
 
   @override
   void initState() {
@@ -49,22 +48,23 @@ class _JoinDojoPageState extends State<JoinDojoPage> {
     return false;
   }
 
-  void validateAndSubmit() async {
+  Future<bool> validateAndSubmit() async {
     try {
       String dojoId = await widget.db.getDojoIdByDojoCode(_dojoCode);
       if (dojoId != null) {
-        dojoExists = true;
         await widget.db.setUserDojo(dojoId, await widget.auth.currentUser());
+        return true;
       }
     }
     catch (e) {
       print('Error: $e');
     }
+    return false;
   }
 
-  void joinDojo() {
+  void joinDojo() async {
     if (validateAndSave()) {
-      validateAndSubmit();
+      bool dojoExists = await validateAndSubmit();
       if (dojoExists) {
         Navigator.of(context).push(
             new MaterialPageRoute(
