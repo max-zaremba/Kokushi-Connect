@@ -17,16 +17,18 @@ class RootPage extends StatefulWidget {
 
 class _RootPageState extends State<RootPage> {
   bool _hasDojo = false;
+  bool _loading;
 
   @override
   void initState() {
     super.initState();
+    _loading = true;
     widget.auth.currentUser().then((userId) {
       setState(() {
         globals.authStatus = userId == null ? globals.AuthStatus.notSignedIn : globals.AuthStatus.signedIn;
       });
-      doesHaveDojo();
     });
+    doesHaveDojo();
   }
 
   Future<void> doesHaveDojo() async {
@@ -34,11 +36,18 @@ class _RootPageState extends State<RootPage> {
     if (userId != null) {
       String dojoId = await widget.db.getUserDojo(userId);
       if (dojoId != null) {
-        _hasDojo = true;
+        setState(() {
+          _hasDojo = true;
+        });
       } else {
-        _hasDojo = false;
+        setState(() {
+          _hasDojo = false;
+        });
       }
     }
+    setState(() {
+      _loading = false;
+    });
   }
 
   void _signedIn() async {
@@ -50,25 +59,34 @@ class _RootPageState extends State<RootPage> {
 
   @override
   Widget build(BuildContext context) {
-    switch (globals.authStatus) {
-      case globals.AuthStatus.notSignedIn:
-        return LoginPage(
-          auth: widget.auth,
-          db: widget.db,
-          onSignedIn: _signedIn,
-        );
-      case globals.AuthStatus.signedIn:
-        if (_hasDojo) {
-          return HomePage(
+    if (_loading) {
+      return Center(
+        child: Container(
+          color: Colors.blue,
+          child: Text("KOKUSHI CONNECT"),
+        ),
+      );
+    } else {
+      switch (globals.authStatus) {
+        case globals.AuthStatus.notSignedIn:
+          return LoginPage(
             auth: widget.auth,
             db: widget.db,
+            onSignedIn: _signedIn,
           );
-        } else {
-          return JoinDojoPage(
-            auth: widget.auth,
-            db: widget.db,
-          );
-        }
+        case globals.AuthStatus.signedIn:
+          if (_hasDojo) {
+            return HomePage(
+              auth: widget.auth,
+              db: widget.db,
+            );
+          } else {
+            return JoinDojoPage(
+              auth: widget.auth,
+              db: widget.db,
+            );
+          }
+      }
     }
   }
 }
