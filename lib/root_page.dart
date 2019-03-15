@@ -5,6 +5,7 @@ import 'db_control.dart';
 import 'home_page.dart';
 import 'globals.dart' as globals;
 import 'join_dojo_page.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
 class RootPage extends StatefulWidget {
   RootPage({this.auth, this.db});
@@ -60,10 +61,17 @@ class _RootPageState extends State<RootPage> {
   @override
   Widget build(BuildContext context) {
     if (_loading) {
-      return Center(
-        child: Container(
-          color: Colors.blue,
-          child: Text("KOKUSHI CONNECT"),
+      return Scaffold(
+        backgroundColor: Colors.blue,
+        body: Center(
+          child: Container(
+            child: AutoSizeText(
+              "Kokushi Connect",
+              style: TextStyle(color: Colors.white, fontFamily: 'Wunderbach', fontWeight: FontWeight.bold, fontSize: 100),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+            ),
+          ),
         ),
       );
     } else {
