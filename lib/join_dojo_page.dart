@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:kokushi_connect/auth.dart';
 import 'db_control.dart';
 import 'custom_app_bar.dart';
-import 'root_page.dart';
-import 'globals.dart';
+import 'home_page.dart';
+import 'create_dojo_page.dart';
 
 class JoinDojoPage extends StatefulWidget {
   JoinDojoPage({this.auth, this.db});
   final BaseAuth auth;
   final Database db;
+
+  final formKey = GlobalKey<FormState>();
 
   @override
   State<StatefulWidget> createState() => _JoinDojoPageState();
@@ -18,6 +19,78 @@ class JoinDojoPage extends StatefulWidget {
 class _JoinDojoPageState extends State<JoinDojoPage> {
   final formKey = GlobalKey<FormState>();
   String _dojoCode;
+  bool _visible = false;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.auth.currentUser().then((userId) {
+      widget.db.getAccountType(userId).then((accountType) {
+        if (accountType == "Coach") {
+          setState(() {
+            _visible = true;
+          });
+        } else {
+          setState(() {
+            _visible = false;
+          });
+        }
+      });
+    });
+  }
+
+  bool validateAndSave() {
+    final form = formKey.currentState;
+    if (form.validate()) {
+      form.save();
+      return true;
+    }
+    return false;
+  }
+
+  Future<bool> validateAndSubmit() async {
+    try {
+      String dojoId = await widget.db.getDojoIdByDojoCode(_dojoCode);
+      if (dojoId != null) {
+        await widget.db.setUserDojo(dojoId, await widget.auth.currentUser());
+        return true;
+      }
+    }
+    catch (e) {
+      print('Error: $e');
+    }
+    return false;
+  }
+
+  void joinDojo() async {
+    if (validateAndSave()) {
+      bool dojoExists = await validateAndSubmit();
+      if (dojoExists) {
+        Navigator.of(context).push(
+            new MaterialPageRoute(
+                builder: (BuildContext context) {
+                  return MaterialApp(
+                    //TODO CreateHomePage
+                    home: HomePage(auth: widget.auth, db: widget.db,),
+                  );
+                }
+            )
+        );
+      }
+    }
+  }
+
+  void moveToCreateDojo() {
+    Navigator.of(context).push(
+        new MaterialPageRoute(
+            builder: (BuildContext context) {
+              return MaterialApp(
+                home: CreateDojoPage(auth: widget.auth, db: widget.db,),
+              );
+            }
+        )
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +99,7 @@ class _JoinDojoPageState extends State<JoinDojoPage> {
         title: Text('Join Dojo'),
         context: context,
         auth: widget.auth,
+        db: widget.db,
       ),
 
       body: Container(
@@ -44,7 +118,14 @@ class _JoinDojoPageState extends State<JoinDojoPage> {
 
                   RaisedButton(
                     child: Text('Join Dojo', style: TextStyle(fontSize: 20)),
-                    onPressed: null,
+                    onPressed: joinDojo,
+                  ),
+                  Visibility(
+                    visible: (_visible),
+                    child: FlatButton(
+                      child: Text('Create Dojo', style: TextStyle(fontSize: 20)),
+                      onPressed: moveToCreateDojo,
+                    ),
                   ),
                 ]
             ),

@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:kokushi_connect/auth.dart';
 import 'custom_app_bar.dart';
 import 'db_control.dart';
-import 'root_page.dart';
+import 'join_dojo_page.dart';
+import 'home_page.dart';
 
 class CreateDojoPage extends StatefulWidget {
   CreateDojoPage({this.auth, this.db});
   final BaseAuth auth;
   final Database db;
-
   @override
   State<StatefulWidget> createState() => _CreateDojoPageState();
 }
@@ -20,6 +19,60 @@ class _CreateDojoPageState extends State<CreateDojoPage> {
   String _dojoName;
   String _address;
   String _dojocode;
+
+  bool validateAndSave() {
+    final form = formKey.currentState;
+    if (form.validate()) {
+      form.save();
+      return true;
+    }
+    return false;
+  }
+
+  void createDojo(String _dojoName, String _address, String _dojocode) async {
+    await widget.db.createDojo(_dojoName, _address, _dojocode);
+    String dojoId = await widget.db.getDojoIdByDojoCode(_dojocode);
+    await widget.db.setUserDojo(dojoId, await widget.auth.currentUser());
+  } 
+
+  void validateAndSubmit() {
+    try {
+      createDojo(_dojoName, _address, _dojocode);
+    }
+    catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  void moveToHomePage() {
+    if (validateAndSave()) {
+      validateAndSubmit();
+      Navigator.of(context).push(
+          new MaterialPageRoute(
+              builder: (BuildContext context) {
+                return MaterialApp(
+                  //TODO CreateHomePage
+                  home: HomePage(auth: widget.auth, db: widget.db),
+                );
+              }
+          )
+      );
+    }
+  }
+
+  void moveToJoinDojoPage() {
+    Navigator.of(context).push(
+        new MaterialPageRoute(
+            builder: (BuildContext context) {
+              return MaterialApp(
+                //TODO CreateHomePage
+                home: JoinDojoPage(auth: widget.auth, db: widget.db),
+              );
+            }
+        )
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,6 +80,7 @@ class _CreateDojoPageState extends State<CreateDojoPage> {
         title: Text('Create Dojo'),
         context: context,
         auth: widget.auth,
+        db: widget.db,
       ),
 
       body: Container(
@@ -57,10 +111,13 @@ class _CreateDojoPageState extends State<CreateDojoPage> {
                     },
                     onSaved: (value) => _dojocode = value,
                   ),
-
                   RaisedButton(
                     child: Text('Create Dojo', style: TextStyle(fontSize: 20)),
-                    onPressed: null,
+                    onPressed: moveToHomePage,
+                  ),
+                  FlatButton(
+                    child: Text('Join Dojo', style: TextStyle(fontSize: 20)),
+                    onPressed: moveToJoinDojoPage,
                   ),
                 ]
             ),
@@ -68,5 +125,4 @@ class _CreateDojoPageState extends State<CreateDojoPage> {
       ),
     );
   }
-
 }

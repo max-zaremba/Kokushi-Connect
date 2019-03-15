@@ -4,14 +4,14 @@ import 'package:kokushi_connect/auth.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:kokushi_connect/create_dojo_page.dart';
 import 'package:kokushi_connect/join_dojo_page.dart';
-import 'package:kokushi_connect/login_page.dart';
+import 'root_page.dart';
 import 'db_control.dart';
 
 class CreateUserPage extends StatefulWidget {
   CreateUserPage({this.auth, this.db});
   final BaseAuth auth;
   final Database db;
-
+  
   @override
   State<StatefulWidget> createState() => _CreateUserPageState();
 }
@@ -60,14 +60,12 @@ class _CreateUserPageState extends State<CreateUserPage> {
   }
 
   void validateAndSubmit() async {
-    if (validateAndSave()) {
-      try {
-        String userId = await widget.auth.createUserWithEmailAndPassword(_email, _password);
-        await widget.db.createAccount(_firstName, _lastName, _dob, _belt, _accountType, userId);
-      }
-      catch (e) {
-        print('Error: $e');
-      }
+    try {
+      String userId = await widget.auth.createUserWithEmailAndPassword(_email, _password);
+      await widget.db.createAccount(_firstName, _lastName, _dob, _belt, _accountType, userId);
+    }
+    catch (e) {
+      print('Error: $e');
     }
   }
 
@@ -91,26 +89,28 @@ class _CreateUserPageState extends State<CreateUserPage> {
   }
 
   void moveToCreateDojo() {
-    validateAndSubmit();
-    Navigator.of(context).push(
-        new MaterialPageRoute(
-            builder: (BuildContext context) {
-              return MaterialApp(
-                home: CreateDojoPage(auth: Auth()),
-              );
-            }
-        )
-    );
-  }
-
-  void moveToJoinDojo() {
-    validateAndSubmit();
     if (validateAndSave()) {
+      validateAndSubmit();
       Navigator.of(context).push(
           new MaterialPageRoute(
               builder: (BuildContext context) {
                 return MaterialApp(
-                  home: JoinDojoPage(auth: Auth()),
+                  home: CreateDojoPage(auth: widget.auth, db: widget.db),
+                );
+              }
+          )
+      );
+    }
+  }
+
+  void moveToJoinDojo() {
+    if (validateAndSave()) {
+      validateAndSubmit();
+      Navigator.of(context).push(
+          new MaterialPageRoute(
+              builder: (BuildContext context) {
+                return MaterialApp(
+                  home: JoinDojoPage(auth: widget.auth, db: widget.db),
                 );
               }
           )
@@ -123,7 +123,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
         new MaterialPageRoute(
             builder: (BuildContext context) {
               return MaterialApp(
-                home: LoginPage(auth: Auth()),
+                home: RootPage(auth: widget.auth, db: widget.db,),
               );
             }
         )
@@ -199,10 +199,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
           child: Text('Create Dojo', style: TextStyle(fontSize: 20)),
           onPressed: moveToCreateDojo,
         ),
-
-
         visible: (_accountType == "Coach"),
-
       ),
       FlatButton(
         child: Text('Have an account? Login', style: TextStyle(fontSize: 20.0)),
