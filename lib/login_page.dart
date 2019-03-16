@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kokushi_connect/base_page.dart';
 import 'package:kokushi_connect/create_user_page.dart';
 import 'package:kokushi_connect/home_page.dart';
 import 'auth.dart';

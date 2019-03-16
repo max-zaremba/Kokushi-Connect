@@ -8,6 +8,7 @@ class HomePage extends StatefulWidget {
 
   final BaseAuth auth;
   final Database db;
+
   State<StatefulWidget> createState() => _HomePageState();
 }
 
@@ -21,9 +22,9 @@ class _HomePageState extends State<HomePage> {
         auth: widget.auth,
         db: widget.db,
       ),
+
       body: Container(
-        //child: updatesAndEvents(),
-        child: Column(children: <Widget>[new Expanded(child: updatesAndEvents()), dock()], mainAxisAlignment: MainAxisAlignment.start,),
+        child: updatesAndEvents(),
       ),
     );
 
@@ -61,76 +62,4 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget dock() {
-    return Row (
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Column(
-          children: [
-            IconButton(
-                icon: Icon(Icons.calendar_today),
-                onPressed: null,
-                alignment: Alignment.center,
-                iconSize: 36
-            ),
-            Text("Calendar"),
-          ],
-        ),
-        Column(
-          children: [
-            IconButton(
-                icon: Icon(Icons.check_box,),
-                onPressed: null,
-                alignment: Alignment.center,
-                iconSize: 36,
-            ),
-            Text("Attendence")
-          ],
-        ),
-        Column(
-          children: [
-            IconButton(
-                icon: Icon(Icons.note),
-                onPressed: null,
-                alignment: Alignment.center,
-                iconSize: 36
-            ),
-            Text("Notes")
-          ],
-        ),
-        Column(
-          children: [
-            IconButton(
-                icon: Icon(Icons.message),
-                onPressed: null,
-                alignment: Alignment.center,
-                iconSize: 36
-            ),
-            Text("Messages")
-          ],
-        ),
-        Column(
-          children: [
-            IconButton(
-                icon: Icon(Icons.info),
-                onPressed: null,
-                alignment: Alignment.center,
-                iconSize: 36
-            ),
-            Text("Info")
-          ],
-        ),
-        Column(
-          children: [
-            IconButton(
-                icon: Icon(Icons.settings),
-                onPressed: null,
-                alignment: Alignment.center,
-                iconSize: 36
-            ),
-            Text("Settings"),
-          ],
-        ),
-      ],
-    );}}
+}

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kokushi_connect/base_page.dart';
 import 'login_page.dart';
 import 'auth.dart';
 import 'db_control.dart';
@@ -84,7 +85,7 @@ class _RootPageState extends State<RootPage> {
           );
         case globals.AuthStatus.signedIn:
           if (_hasDojo) {
-            return HomePage(
+            return BasePage(
               auth: widget.auth,
               db: widget.db,
             );
@@ -98,3 +99,4 @@ class _RootPageState extends State<RootPage> {
     }
   }
 }
+
