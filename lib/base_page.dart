@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kokushi_connect/db_control.dart';
 import 'package:kokushi_connect/home_page.dart';
+import 'package:kokushi_connect/student_info_page.dart';
 import 'auth.dart';
 
 
@@ -20,7 +21,7 @@ class _BasePageState extends State<BasePage> {
       HomePage(auth: widget.auth, db: widget.db),
       null,
       null,
-      null,
+      StudentListPage(auth: widget.auth, db: widget.db),
       null,
       null,
     ];
