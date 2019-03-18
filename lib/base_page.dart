@@ -1,33 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:kokushi_connect/db_control.dart';
 import 'package:kokushi_connect/home_page.dart';
 import 'auth.dart';
 
 
 class BasePage extends StatefulWidget {
-  BasePage({this.auth, this.onSignedOut});
+  BasePage({this.auth, this.db});
 
   final BaseAuth auth;
-  final VoidCallback onSignedOut;
+  final Database db;
   State<StatefulWidget> createState() => _BasePageState();
 }
 
 class _BasePageState extends State<BasePage> {
   @override
 
-  void _signOut() async {
-    try {
-      await widget.auth.signOut();
-      widget.onSignedOut();
-    } catch (e) {
-      print(e);
-    }
-  }
-
-
-
   List <Widget> pages() {
     return [
-      HomePage(auth: widget.auth,),
+      HomePage(auth: widget.auth, db: widget.db),
       null,
       null,
       null,
