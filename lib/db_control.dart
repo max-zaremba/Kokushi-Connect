@@ -31,6 +31,7 @@ abstract class Database {
   Future<String> getDojoCode(String dojoId);
   Future<String> getDojoAddress(String dojoId);
   Future<String> getDojoIdByDojoCode(String dojoCode);
+  Future<DocumentSnapshot> getAllUsersByDojoId(String dojoId);
   
   //dojo setters
   Future<void> setDojoCode(String code, String dojoId);
@@ -42,7 +43,7 @@ abstract class Database {
 class Db implements Database {
   final Firestore _firestore = Firestore.instance;
 
-  //gets all user information
+  //gets all of one users information
   Future<DocumentSnapshot> userInfo(String userId) async {
     return _firestore.collection('users').document(userId).get();
   }
@@ -162,6 +163,12 @@ class Db implements Database {
     } catch (e) {
       return null;
     }
+  }
+
+  Future<DocumentSnapshot> getAllUsersByDojoId(String dojoId) async {
+    //TODO needs to be rewritten to work
+    DocumentSnapshot document = await userInfo(dojoId);
+    return document.data['members'];
   }
 
   //setters for dojo

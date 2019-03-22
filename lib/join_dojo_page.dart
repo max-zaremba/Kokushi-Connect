@@ -70,7 +70,6 @@ class _JoinDojoPageState extends State<JoinDojoPage> {
             new MaterialPageRoute(
                 builder: (BuildContext context) {
                   return MaterialApp(
-                    //TODO CreateHomePage
                     home: HomePage(auth: widget.auth, db: widget.db,),
                   );
                 }

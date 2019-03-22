@@ -21,7 +21,7 @@ class _BasePageState extends State<BasePage> {
       HomePage(auth: widget.auth, db: widget.db),
       null,
       null,
-      StudentListPage(auth: widget.auth, db: widget.db, students: randStud(),),
+      StudentListPage(auth: widget.auth, db: widget.db,),
       null,
       null,
     ];

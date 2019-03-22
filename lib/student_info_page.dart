@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kokushi_connect/auth.dart';
 import 'package:kokushi_connect/custom_app_bar.dart';
 import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:kokushi_connect/db_control.dart';
 
@@ -13,30 +14,44 @@ class Student {
   Student(this.name, this.description, this.dob);
 }
 
-List <Student> randStud() {
-  var rand = new Random();
+// List <Student> randStud() {
+//   var rand = new Random();
 
-    return List.generate(
-        20, (i) => Student(
-        'Student $i',
-        'A description of what needs to be done for student $i',
-        new DateTime(1995 + rand.nextInt(15), 1 + rand.nextInt(11), 1 + rand.nextInt(30)),
-      )
-  );
-}
+//     return List.generate(
+//         20, (i) => Student(
+//         'Student $i',
+//         'A description of what needs to be done for student $i',
+//         new DateTime(1995 + rand.nextInt(15), 1 + rand.nextInt(11), 1 + rand.nextInt(30)),
+//       )
+//   );
+// }
 
 class StudentListPage extends StatefulWidget {
 
-  StudentListPage({this.auth, this.db, this.students});
+  StudentListPage({this.auth, this.db});
   final BaseAuth auth;
   final Database db;
-  final List<Student> students;
+  List<Student> students;
 
   @override
   State<StatefulWidget> createState() => _StudentListPageState();
 }
 
 class _StudentListPageState extends State<StudentListPage> {
+
+  @override
+  void initState() {
+    super.initState();
+    loadStudents();
+  }
+
+  void loadStudents() async {
+    DocumentSnapshot all_users = await widget.db.getAllUsersByDojoId(await widget.auth.currentUser()); //don't know how to write this line
+    print(all_users);
+    //for blah blah blah
+      //append shit
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
