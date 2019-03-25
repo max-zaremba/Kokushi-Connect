@@ -141,17 +141,17 @@ class Db implements Database {
 
   //getters for dojo
   Future<String> getDojoName([String dojoId]) async {
-    DocumentSnapshot document = await userInfo(dojoId);
+    DocumentSnapshot document = await dojoInfo(dojoId);
     return document.data['dojoName'];
   }
 
   Future<String> getDojoCode(String dojoId) async {
-    DocumentSnapshot document = await userInfo(dojoId);
+    DocumentSnapshot document = await dojoInfo(dojoId);
     return document.data['dojoCode'];
   }
 
   Future<String> getDojoAddress(String dojoId) async {
-    DocumentSnapshot document = await userInfo(dojoId);
+    DocumentSnapshot document = await dojoInfo(dojoId);
     return document.data['address'];
   }
   
@@ -167,7 +167,8 @@ class Db implements Database {
 
   Future<DocumentSnapshot> getAllUsersByDojoId(String dojoId) async {
     //TODO needs to be rewritten to work
-    DocumentSnapshot document = await userInfo(dojoId);
+    DocumentSnapshot document = await dojoInfo(dojoId);
+
     return document.data['members'];
   }
 
