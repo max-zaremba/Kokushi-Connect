@@ -38,18 +38,16 @@ class StudentListPage extends StatefulWidget {
 }
 
 class _StudentListPageState extends State<StudentListPage> {
+  String dojoId = "";
 
   @override
   void initState() {
     super.initState();
-    loadStudents();
+    getDojoId();
   }
 
-  void loadStudents() async {
-    DocumentSnapshot all_users = await widget.db.getAllUsersByDojoId(await widget.auth.currentUser()); //don't know how to write this line
-    print(all_users);
-    //for blah blah blah
-      //append shit
+  void getDojoId() async {
+    dojoId = await widget.db.getUserDojo(await widget.auth.currentUser());
   }
 
   @override
@@ -61,8 +59,15 @@ class _StudentListPageState extends State<StudentListPage> {
         auth: widget.auth,
         db: widget.db,
       ),
-      body: ListView.builder(
-        itemCount: widget.students.length,
+      body: StreamBuilder(
+        stream: Firestore.instance.collection('dojos').document(dojoId).collection('members').snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (!snapshot.hasData) return Text("No Students");
+          return ListView(children: getStudents(snapshot),);
+        },
+      )
+      /*ListView.builder(
+        //itemCount: widget.students.length,
         itemBuilder: (context, index) {
           return ListTile(
             title: Text(widget.students[index].name),
@@ -78,8 +83,14 @@ class _StudentListPageState extends State<StudentListPage> {
             },
           );
         },
-      ),
+      ),*/
     );
+  }
+
+  getStudents(AsyncSnapshot<QuerySnapshot> snapshot) {
+    return snapshot.data.documents.map((document) {
+      ListTile(title: Text(document.data.keys.first),);
+    }).toList();
   }
 }
 

@@ -31,7 +31,7 @@ abstract class Database {
   Future<String> getDojoCode(String dojoId);
   Future<String> getDojoAddress(String dojoId);
   Future<String> getDojoIdByDojoCode(String dojoCode);
-  Future<DocumentSnapshot> getAllUsersByDojoId(String dojoId);
+  //Future<DocumentSnapshot> getAllUsersByDojoId(String dojoId);
   
   //dojo setters
   Future<void> setDojoCode(String code, String dojoId);
@@ -165,12 +165,12 @@ class Db implements Database {
     }
   }
 
-  Future<DocumentSnapshot> getAllUsersByDojoId(String dojoId) async {
-    //TODO needs to be rewritten to work
-    DocumentSnapshot document = await dojoInfo(dojoId);
+  // Future<DocumentSnapshot> getAllUsersByDojoId(String dojoId) async {
+  //   //TODO needs to be rewritten to work
+  //   DocumentSnapshot document = await dojoInfo(dojoId);
 
-    return document.data['members'];
-  }
+  //   return document.data['members'];
+  // }
 
   //setters for dojo
   Future<void> setDojoCode(String code, String dojoId) async {
