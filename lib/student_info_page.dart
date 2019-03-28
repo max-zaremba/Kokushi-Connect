@@ -31,7 +31,6 @@ class StudentListPage extends StatefulWidget {
   StudentListPage({this.auth, this.db});
   final BaseAuth auth;
   final Database db;
-  List<Student> students;
 
   @override
   State<StatefulWidget> createState() => _StudentListPageState();
@@ -39,6 +38,7 @@ class StudentListPage extends StatefulWidget {
 
 class _StudentListPageState extends State<StudentListPage> {
   String dojoId = "";
+  bool _loading = true;
 
   @override
   void initState() {
@@ -48,25 +48,36 @@ class _StudentListPageState extends State<StudentListPage> {
 
   void getDojoId() async {
     dojoId = await widget.db.getUserDojo(await widget.auth.currentUser());
+    setState(() {
+      _loading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: Text('Student Info'),
-        context: context,
-        auth: widget.auth,
-        db: widget.db,
-      ),
-      body: StreamBuilder(
-        stream: Firestore.instance.collection('dojos').document(dojoId).collection('members').snapshots(),
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (!snapshot.hasData) return Text("No Students");
-          return ListView(children: getStudents(snapshot),);
-        },
-      )
-      /*ListView.builder(
+    if (_loading) {
+      return CircularProgressIndicator();
+    } else {
+      return Scaffold(
+          appBar: CustomAppBar(
+            title: Text('Student Info'),
+            context: context,
+            auth: widget.auth,
+            db: widget.db,
+          ),
+          body: StreamBuilder(
+            stream: Firestore.instance.collection('dojos')
+                .document(dojoId)
+                .collection('members')
+                .snapshots(),
+            builder: (BuildContext context,
+                AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.hasError) return Text("Error!");
+              else if (!snapshot.hasData) return Text("No Students");
+              return ListView(children: getStudents(snapshot),);
+            },
+          )
+        /*ListView.builder(
         //itemCount: widget.students.length,
         itemBuilder: (context, index) {
           return ListTile(
@@ -84,13 +95,17 @@ class _StudentListPageState extends State<StudentListPage> {
           );
         },
       ),*/
-    );
+      );
+    }
   }
 
   getStudents(AsyncSnapshot<QuerySnapshot> snapshot) {
-    return snapshot.data.documents.map((document) {
-      ListTile(title: Text(document.data.keys.first),);
-    }).toList();
+    print("Get students called");
+    List<ListTile> students = [];
+    snapshot.data.documents.forEach((document) {
+      students.add(ListTile(title: Text(document.data.keys.first)));
+    });
+    return students;
   }
 }
 
