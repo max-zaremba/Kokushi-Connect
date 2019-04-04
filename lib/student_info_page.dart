@@ -7,11 +7,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:kokushi_connect/db_control.dart';
 
 class Student {
-  final String name;
-  final String description;
-  final DateTime dob;
+  String id;
+  String first_name;
+  String last_name;
+  String nickname;
+  DateTime dob;
+  String status;
+  String rank;
+  String description;
 
-  Student(this.name, this.description, this.dob);
+  Student();
 }
 
 // List <Student> randStud() {
@@ -38,6 +43,7 @@ class StudentListPage extends StatefulWidget {
 
 class _StudentListPageState extends State<StudentListPage> {
   String dojoId = "";
+  List<Student> students = [];
   bool _loading = true;
 
   @override
@@ -48,6 +54,20 @@ class _StudentListPageState extends State<StudentListPage> {
 
   void getDojoId() async {
     dojoId = await widget.db.getUserDojo(await widget.auth.currentUser());
+    QuerySnapshot docs = await Firestore.instance.collection('dojos').document(dojoId).collection('members').getDocuments();
+    docs.documents.forEach((document) async {
+      String studentId = document.data.keys.first;
+      Student stu = new Student();
+      stu.id = studentId;
+      stu.first_name = await widget.db.getFirstName(studentId);
+      stu.last_name = await widget.db.getLastName(studentId);
+      stu.nickname = await widget.db.getNickname(studentId);
+      stu.dob = await widget.db.getDOB(studentId);
+      stu.status = await widget.db.getAccountType(studentId);
+      stu.rank = await widget.db.getRank(studentId);
+      stu.description = await widget.db.getDescription(studentId);
+      students.add(stu);
+    });
     setState(() {
       _loading = false;
     });
@@ -74,7 +94,7 @@ class _StudentListPageState extends State<StudentListPage> {
                 AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasError) return Text("Error!");
               else if (!snapshot.hasData) return Text("No Students");
-              return ListView(children: getStudents(snapshot),);
+              return ListView(children: getStudents(),);
             },
           )
         /*ListView.builder(
@@ -99,13 +119,25 @@ class _StudentListPageState extends State<StudentListPage> {
     }
   }
 
-  getStudents(AsyncSnapshot<QuerySnapshot> snapshot) {
+  getStudents() {
     print("Get students called");
-    List<ListTile> students = [];
-    snapshot.data.documents.forEach((document) {
-      students.add(ListTile(title: Text(document.data.keys.first)));
-    });
-    return students;
+    List<ListTile> stdnts = [];
+    for(Student stu in students){
+      stdnts.add(ListTile(
+            title: Text(stu.first_name + " " + stu.last_name),
+            // When a user taps on the ListTile, navigate to ParentDetail.
+            // passes student to new ParentDetail
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => InfoPage(auth: widget.auth, db: widget.db, student: stu),
+                ),
+              );
+            },
+          ));
+    }
+    return stdnts;
   }
 }
 
@@ -131,7 +163,7 @@ class _InfoPageState extends State<InfoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-        title: Text(widget.student.name),
+        title: Text(widget.student.first_name + " " + widget.student.last_name),
         context: context,
         auth: widget.auth,
         db: widget.db,
@@ -162,8 +194,8 @@ class _InfoPageState extends State<InfoPage> {
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(5)
                           ),
-                          hintText: '...',
-                          labelText: 'Rank'
+                          hintText: 'Enter rank',
+                          labelText: widget.student.rank
                       ),
                     )
                 ),
