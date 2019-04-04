@@ -78,7 +78,7 @@ class _StudentListPageState extends State<StudentListPage> {
     if (_loading) {
       return CircularProgressIndicator();
     } else {
-      return Scaffold(
+      /*return Scaffold(
           appBar: CustomAppBar(
             title: Text('Student Info'),
             context: context,
@@ -96,26 +96,16 @@ class _StudentListPageState extends State<StudentListPage> {
               else if (!snapshot.hasData) return Text("No Students");
               return ListView(children: getStudents(),);
             },
-          )
-        /*ListView.builder(
-        //itemCount: widget.students.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(widget.students[index].name),
-            // When a user taps on the ListTile, navigate to ParentDetail.
-            // passes student to new ParentDetail
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => InfoPage(auth: widget.auth, db: widget.db, student: widget.students[index]),
-                ),
-              );
-            },
-          );
-        },
-      ),*/
-      );
+          ) */
+        return Scaffold(
+          appBar: CustomAppBar(
+            title: Text('Student Info'),
+            context: context,
+            auth: widget.auth,
+            db: widget.db,
+          ),
+          body: ListView(children: getStudents(),)
+        );
     }
   }
 
