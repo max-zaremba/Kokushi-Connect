@@ -92,12 +92,8 @@ class _CreateUserPageState extends State<CreateUserPage> {
     if (validateAndSave()) {
       validateAndSubmit();
       Navigator.of(context).push(
-          new MaterialPageRoute(
-              builder: (BuildContext context) {
-                return MaterialApp(
-                  home: CreateDojoPage(auth: widget.auth, db: widget.db),
-                );
-              }
+          MaterialPageRoute(
+            builder: (context) => CreateDojoPage(auth: widget.auth, db: widget.db),
           )
       );
     }
@@ -107,12 +103,8 @@ class _CreateUserPageState extends State<CreateUserPage> {
     if (validateAndSave()) {
       validateAndSubmit();
       Navigator.of(context).push(
-          new MaterialPageRoute(
-              builder: (BuildContext context) {
-                return MaterialApp(
-                  home: JoinDojoPage(auth: widget.auth, db: widget.db),
-                );
-              }
+          MaterialPageRoute(
+            builder: (context) => JoinDojoPage(auth: widget.auth, db: widget.db),
           )
       );
     }
@@ -120,12 +112,8 @@ class _CreateUserPageState extends State<CreateUserPage> {
 
   void moveToLogin() {
     Navigator.of(context).push(
-        new MaterialPageRoute(
-            builder: (BuildContext context) {
-              return MaterialApp(
-                home: RootPage(auth: widget.auth, db: widget.db,),
-              );
-            }
+        MaterialPageRoute(
+          builder: (context) => RootPage(auth: widget.auth, db: widget.db),
         )
     );
   }

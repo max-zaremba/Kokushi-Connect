@@ -25,6 +25,7 @@ abstract class Database {
   //create
   Future<void> createDojo(String dojoName, String address, String dojoCode);
   Future<void> createAccount(String firstName, String lastName, DateTime dob, String rank, String accountType, String userId); //creates a new account
+  Future<void> createEvent(DateTime date, String title, String description, String userId, String dojoId);
 
   //dojo getters
   Future<String> getDojoName(String dojoId);
@@ -37,6 +38,14 @@ abstract class Database {
   Future<void> setDojoName(String name, String dojoId);
   Future<void> setDojoAddress(String address, String dojoId);
   Future<void> addMemberToDojo(String userId, String dojoId);
+
+  //event getters
+  Future<String> getEventTitle (String eventId);
+  Future<String> getEventDescription (String eventId);
+  Future<String> getUserIdForEvent (String eventId);
+  Future<String> getDojoIdForEvent (String eventId);
+  Future<DateTime> getEventDate (String eventId);
+
 }
 
 class Db implements Database {
@@ -133,6 +142,11 @@ class Db implements Database {
     return dojoId;
   }
 
+  Future<void> createEvent(DateTime date, String title, String description, String userId, String dojoId) async {
+    print(date.month.toString());
+    return _firestore.collection("events").document().setData({'date': date, 'title': title, 'description': description, 'userId': userId, 'dojoId': dojoId});
+  }
+
   //gets all dojo information
   Future<DocumentSnapshot> dojoInfo(String dojoId) async {
     return _firestore.collection('dojos').document(dojoId).get();
@@ -177,6 +191,32 @@ class Db implements Database {
 
   Future<void> addMemberToDojo(String userId, String dojoId) {
     return _firestore.collection("dojos").document(dojoId).collection("members").add({ userId : true });
+  }
+
+  //getters for event
+  Future<String> getEventTitle (String eventId) async {
+    DocumentSnapshot document = await userInfo(eventId);
+    return document.data['title'];
+  }
+
+  Future<String> getEventDescription (String eventId) async {
+    DocumentSnapshot document = await userInfo(eventId);
+    return document.data['description'];
+  }
+
+  Future<String> getUserIdForEvent (String eventId) async {
+    DocumentSnapshot document = await userInfo(eventId);
+    return document.data['userId'];
+  }
+
+  Future<String> getDojoIdForEvent (String eventId) async {
+    DocumentSnapshot document = await userInfo(eventId);
+    return document.data['dojoId'];
+  }
+
+  Future<DateTime> getEventDate (String eventId) async {
+    DocumentSnapshot document = await userInfo(eventId);
+    return document.data['date'];
   }
 
 }
