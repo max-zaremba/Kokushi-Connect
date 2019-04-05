@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kokushi_connect/auth.dart';
 import 'package:kokushi_connect/custom_app_bar.dart';
-import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:kokushi_connect/db_control.dart';
@@ -18,18 +17,6 @@ class Student {
 
   Student();
 }
-
-// List <Student> randStud() {
-//   var rand = new Random();
-
-//     return List.generate(
-//         20, (i) => Student(
-//         'Student $i',
-//         'A description of what needs to be done for student $i',
-//         new DateTime(1995 + rand.nextInt(15), 1 + rand.nextInt(11), 1 + rand.nextInt(30)),
-//       )
-//   );
-// }
 
 class StudentListPage extends StatefulWidget {
 
@@ -115,8 +102,6 @@ class _StudentListPageState extends State<StudentListPage> {
     for(Student stu in students){
       stdnts.add(ListTile(
             title: Text(stu.first_name + " " + stu.last_name),
-            // When a user taps on the ListTile, navigate to ParentDetail.
-            // passes student to new ParentDetail
             onTap: () {
               Navigator.push(
                 context,
@@ -148,79 +133,197 @@ class _InfoPageState extends State<InfoPage> {
   InfoPage get widget => super.widget;
 
   bool _isChecked = false;
+  String _belt;
+  String _status;
+
+  var _studentStatuses = ['Student', 'Assistant Instructor'];
+  var _ranks = [
+    DropdownMenuItem<String>(child: Text("White"), value: "White"),
+    DropdownMenuItem<String>(child: Text("Yellow"), value: "Yellow"),
+    DropdownMenuItem<String>(child: Text("Orange"), value: "Orange"),
+    DropdownMenuItem<String>(child: Text("Green"), value: "Green"),
+    DropdownMenuItem<String>(child: Text("Blue"), value: "Blue"),
+    DropdownMenuItem<String>(child: Text("Purple"), value: "Purple"),
+    DropdownMenuItem<String>(child: Text("Brown, Sankyu"), value: "Sankyu"),
+    DropdownMenuItem<String>(child: Text("Brown, Nikyu"), value: "Nikyu"),
+    DropdownMenuItem<String>(child: Text("Brown, Ikkyu"), value: "Ikkyu"),
+    DropdownMenuItem<String>(child: Text("Black, Shodan"), value: "Shodan"),
+    DropdownMenuItem<String>(child: Text("Black, Nidan"), value: "Nidan"),
+    DropdownMenuItem<String>(child: Text("Black, Sandan"), value: "Sandan"),
+    DropdownMenuItem<String>(child: Text("Black, Yodan"), value: "Yodan"),
+    DropdownMenuItem<String>(child: Text("Black, Godan"), value: "Godan"),
+    //anything below this line is really rare, prolly not gonna have any of these on the app
+    DropdownMenuItem<String>(child: Text("Black, Rokudan"), value: "Rokudan"),
+    DropdownMenuItem<String>(child: Text("Black, Shichidan"), value: "Shichidan"),
+    DropdownMenuItem<String>(child: Text("Black, Hachidan"), value: "Hachidan"),
+    DropdownMenuItem<String>(child: Text("Black, Kudan"), value: "Kudan"),
+    DropdownMenuItem<String>(child: Text("Black, Judan"), value: "Judan")
+  ];
+
+  int calculateAge() {
+    Duration dur = DateTime.now().difference(widget.student.dob);
+    int diff = (dur.inDays/365).floor();
+    return diff;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        title: Text(widget.student.first_name + " " + widget.student.last_name),
-        context: context,
-        auth: widget.auth,
-        db: widget.db,
-      ),
-      body: Padding(
-          padding: EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0),
-          child: ListView(
-              children: <Widget>[
+        appBar: CustomAppBar(
+          title: Text(widget.student.first_name + ' ' + widget.student.last_name),
+          context: context,
+          auth: widget.auth,
+          db: widget.db,
+        ),
+        body: Center(
+          child: Container(
+              child: ListView(
+                  children: <Widget>[
 
-                //date of birth
-                Padding(
-                    padding: EdgeInsets.only(top: 5.0),
-                    child: DefaultTextStyle(
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.black,
-                        ),
-                        textAlign: TextAlign.center,
-                        child: Text('D.O.B: ' + widget.student.dob.month.toString() + '-' + widget.student.dob.day.toString() + '-' + widget.student.dob.year.toString())
-                    )
-                ),
+                    //first name
+                    Padding(
+                      padding: EdgeInsets.only(top: 15.0, right: 15.0, left: 15.0),
+                      child: Row(
+                          children: [
+                            Padding(
+                                padding: EdgeInsets.only(right: 15.0),
+                                child: Text('First Name')),
+                            Expanded(
+                                child: TextField(
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(5)
+                                    ),
+                                  ),
+                                )
+                            )
+                          ]
+                      )
+                    ),
 
-                //rank
-                Padding(
-                    padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                    child: TextField(
-                      decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5)
+                    //last name
+                    Padding(
+                        padding: EdgeInsets.only(top: 15.0, right: 15.0, left: 15.0),
+                        child: Row(
+                            children: [
+                              Padding(
+                                  padding: EdgeInsets.only(right: 15.0),
+                                  child: Text('Last Name')),
+                              Expanded(
+                                  child: TextField(
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(5)
+                                      ),
+                                    ),
+                                  )
+                              )
+                            ]
+                        )
+                    ),
+
+                    //nickname
+                    Padding(
+                      padding: EdgeInsets.only(top: 15.0, right: 15.0, left: 15.0),
+                      child: Row(
+                          children: [
+                            Padding(
+                                padding: EdgeInsets.only(right: 15.0),
+                                child: Text('Nickname')),
+                            Expanded(
+                                child: TextField(
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(5)
+                                    ),
+                                  ),
+                                )
+                            )
+                          ]
+                      )
+                    ),
+
+                    //age
+                    Padding(
+                        padding: EdgeInsets.only(top: 15.0),
+                        child: DefaultTextStyle(
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.black,
+                            ),
+                            textAlign: TextAlign.center,
+                            child: Text('Age: ' +
+                                calculateAge().toString())
+                        )
+                    ),
+
+                    Padding(
+                      padding: EdgeInsets.only(top: 15.0, right: 15.0, left: 15.0),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Padding(
+                                padding: EdgeInsets.only(right: 15.0),
+                                child: Text('Status:')),
+                            DropdownButton<String>(
+                                items: _studentStatuses.map((String dropDownStringItem) {
+                                  return DropdownMenuItem<String>(
+                                      value: dropDownStringItem,
+                                      child: Text(dropDownStringItem)
+                                  );
+                                }).toList(),
+
+                                value: _status,
+                                onChanged: (value){ setState(() { _status = value; }); }
+                            )
+                          ]
+                      )
+                    ),
+
+                    Padding(
+                      padding: EdgeInsets.only(top: 15.0, right: 15.0, left: 15.0),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Padding(
+                            padding: EdgeInsets.only(right: 15.0),
+                              child: Text('Rank:')),
+                            DropdownButton(
+                              value: _belt,
+                              onChanged: (value){ setState(() { _belt = value; }); },
+                              items: _ranks,
+                            ),
+                          ]
+                      )
+                    ),
+
+                    //note
+                    Container(
+                        margin: EdgeInsets.all(8.0),
+                        padding: EdgeInsets.only(bottom: 10.0, right: 10.0, left: 10.0),
+                        child: TextField(
+                            maxLines: 15,
+                            decoration: InputDecoration(
+                              hintText: "additional info...",
+                              border: OutlineInputBorder(),
+                            )
+                        )
+                    ),
+
+                    Padding(
+                        padding: EdgeInsets.only(top: 10.0, bottom: 15.0),
+                        child: Align(
+                          alignment: Alignment.bottomRight,
+                          child: RaisedButton(
+                            child: Text(
+                                'Save Changes', style: TextStyle(fontSize: 20)),
+                            //onPressed: validateAndSubmit,
                           ),
-                          hintText: 'Enter rank',
-                          labelText: widget.student.rank
-                      ),
-                    )
-                ),
-
-
-                //assistant instructor?
-                Padding(
-                    padding: EdgeInsets.only(top: 10.0, bottom: 15.0),
-                    child: CheckboxListTile(
-                      title: Text('Assistant Instructor'),
-                      value: _isChecked,
-                      onChanged: (bool newValue) {
-                        setState(() {
-                          _isChecked = newValue;
-                        });
-                      },
-                    )
-                ),
-
-                //note
-                Container(
-                    margin: EdgeInsets.all(8.0),
-                    padding: EdgeInsets.only(bottom: 40.0),
-                    child: TextField(
-                        maxLines: 99,
-                        decoration: InputDecoration(
-                          hintText: "additional info...",
-                          border: OutlineInputBorder(),
                         )
                     )
-                )
-
-              ]
+                  ]
+              )
           )
-      ),
+        )
     );
-  }
-}
+  }}
