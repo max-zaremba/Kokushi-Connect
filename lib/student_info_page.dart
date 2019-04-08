@@ -41,6 +41,7 @@ class _StudentListPageState extends State<StudentListPage> {
 
   void getDojoId() async {
     dojoId = await widget.db.getUserDojo(await widget.auth.currentUser());
+    print("Current dojo $dojoId");
     QuerySnapshot docs = await Firestore.instance.collection('dojos').document(dojoId).collection('members').getDocuments();
     docs.documents.forEach((document) async {
       String studentId = document.data.keys.first;
@@ -55,6 +56,7 @@ class _StudentListPageState extends State<StudentListPage> {
       stu.description = await widget.db.getDescription(studentId);
       students.add(stu);
     });
+    print("in getDojoId: $students");
     setState(() {
       _loading = false;
     });
@@ -98,6 +100,7 @@ class _StudentListPageState extends State<StudentListPage> {
 
   getStudents() {
     print("Get students called");
+    print(students);
     List<ListTile> stdnts = [];
     for(Student stu in students){
       stdnts.add(ListTile(
@@ -129,12 +132,18 @@ class InfoPage extends StatefulWidget {
 }
 
 class _InfoPageState extends State<InfoPage> {
+  final formKey = GlobalKey<FormState>();
+
   @override
   InfoPage get widget => super.widget;
 
   bool _isChecked = false;
   String _belt;
   String _status;
+  String _firstName;
+  String _lastName;
+  String _nickname;
+  String _description;
 
   var _studentStatuses = ['Student', 'Assistant Instructor'];
   var _ranks = [
@@ -166,6 +175,25 @@ class _InfoPageState extends State<InfoPage> {
     return diff;
   }
 
+  bool validateAndSave() {
+    final form = formKey.currentState;
+    if (form.validate()) {
+      form.save();
+      return true;
+    }
+    return false;
+  }
+
+  void validateAndSubmit() async {
+    try {
+      String userId = await widget.auth.currentUser();
+      await Firestore.instance.collection('users').document(userId).setData({'firstName' : _firstName, 'lastName' :_lastName, 'nickname' : _nickname, 'description' : _description, 'rank' : _belt, 'accountType' :_status,});
+    }
+    catch (e) {
+      print('Error: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -179,7 +207,6 @@ class _InfoPageState extends State<InfoPage> {
           child: Container(
               child: ListView(
                   children: <Widget>[
-
                     //first name
                     Padding(
                       padding: EdgeInsets.only(top: 15.0, right: 15.0, left: 15.0),
@@ -189,12 +216,13 @@ class _InfoPageState extends State<InfoPage> {
                                 padding: EdgeInsets.only(right: 15.0),
                                 child: Text('First Name')),
                             Expanded(
-                                child: TextField(
+                                child: TextFormField(
                                   decoration: InputDecoration(
                                     border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(5)
                                     ),
                                   ),
+                                  onSaved: (value) => _firstName = value,
                                 )
                             )
                           ]
@@ -210,12 +238,13 @@ class _InfoPageState extends State<InfoPage> {
                                   padding: EdgeInsets.only(right: 15.0),
                                   child: Text('Last Name')),
                               Expanded(
-                                  child: TextField(
+                                  child: TextFormField(
                                     decoration: InputDecoration(
                                       border: OutlineInputBorder(
                                           borderRadius: BorderRadius.circular(5)
                                       ),
                                     ),
+                                    onSaved: (value) => _lastName = value,
                                   )
                               )
                             ]
@@ -231,12 +260,13 @@ class _InfoPageState extends State<InfoPage> {
                                 padding: EdgeInsets.only(right: 15.0),
                                 child: Text('Nickname')),
                             Expanded(
-                                child: TextField(
+                                child: TextFormField(
                                   decoration: InputDecoration(
                                     border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(5)
                                     ),
                                   ),
+                                  onSaved: (value) => _nickname = value,
                                 )
                             )
                           ]
@@ -301,12 +331,13 @@ class _InfoPageState extends State<InfoPage> {
                     Container(
                         margin: EdgeInsets.all(8.0),
                         padding: EdgeInsets.only(bottom: 10.0, right: 10.0, left: 10.0),
-                        child: TextField(
+                        child: TextFormField(
                             maxLines: 15,
                             decoration: InputDecoration(
                               hintText: "additional info...",
                               border: OutlineInputBorder(),
-                            )
+                            ),
+                            onSaved: (value) => _description = value,
                         )
                     ),
 
@@ -317,7 +348,7 @@ class _InfoPageState extends State<InfoPage> {
                           child: RaisedButton(
                             child: Text(
                                 'Save Changes', style: TextStyle(fontSize: 20)),
-                            //onPressed: validateAndSubmit,
+                            onPressed: validateAndSubmit,
                           ),
                         )
                     )
