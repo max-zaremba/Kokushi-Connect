@@ -33,111 +33,111 @@ class _BasePageState extends State<BasePage> {
   }
 
   Widget build(BuildContext context) {
-      return Scaffold(
-        body: Container(
-          //child: updatesAndEvents(),
-          child: Column(children: <Widget>[new Expanded(child: page()), dock()], mainAxisAlignment: MainAxisAlignment.start,),
-        ),
-      );
-    }
+    return Scaffold(
+      body: Container(
+        //child: updatesAndEvents(),
+        child: Column(children: <Widget>[new Expanded(child: page()), dock()], mainAxisAlignment: MainAxisAlignment.start,),
+      ),
+    );
+  }
 
-    Widget dock() {
-      return Row (
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Column(
-            children: [
-              IconButton(
-                  icon: Icon(Icons.home),
-                  onPressed:  () {
-                    setState(() {
-                      pageNum = 0;
-                    });
-                  },
-                  alignment: Alignment.center,
-                  iconSize: 36
-              ),
-              Text("Home")
-            ],
-          ),
-          Column(
-            children: [
-              IconButton(
-                  icon: Icon(Icons.calendar_today),
-                  onPressed: () {
-                    setState(() {
-                      pageNum = 1;
-                    });
-                  },
-                  alignment: Alignment.center,
-                  iconSize: 36,
-              ),
-              Text("Calendar"),
-            ],
-          ),
-          Column(
-            children: [
-              IconButton(
-                icon: Icon(Icons.check_box,),
+  Widget dock() {
+    return Row (
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Column(
+          children: [
+            IconButton(
+                icon: Icon(Icons.home),
                 onPressed:  () {
                   setState(() {
-                    pageNum = 2;
+                    pageNum = 0;
+                  });
+                },
+                alignment: Alignment.center,
+                iconSize: 36
+            ),
+            Text("Home")
+          ],
+        ),
+        Column(
+          children: [
+            IconButton(
+                icon: Icon(Icons.calendar_today),
+                onPressed: () {
+                  setState(() {
+                    pageNum = 1;
                   });
                 },
                 alignment: Alignment.center,
                 iconSize: 36,
-              ),
-              Text("Attendence")
-            ],
-          ),
-          Column(
-            children: [
-              IconButton(
-                  icon: Icon(Icons.note),
-                  onPressed:  () {
-                    setState(() {
-                      pageNum = 3;
-                    });
-                  },
-                  alignment: Alignment.center,
-                  iconSize: 36
-              ),
-              Text("Notes")
-            ],
-          ),
-          Column(
-            children: [
-              IconButton(
-                  icon: Icon(Icons.message),
-                  onPressed:  () {
-                    setState(() {
-                      pageNum = 4;
-                    });
-                  },
-                  alignment: Alignment.center,
-                  iconSize: 36
-              ),
-              Text("Messages")
-            ],
-          ),
-          Column(
-            children: [
-              IconButton(
-                  icon: Icon(Icons.settings),
-                  onPressed:  () {
-                    setState(() {
-                      pageNum = 5;
-                    });
-                  },
-                  alignment: Alignment.center,
-                  iconSize: 36
-              ),
-              Text("Settings"),
-            ],
-          ),
-        ],
-      );}
+            ),
+            Text("Calendar"),
+          ],
+        ),
+        Column(
+          children: [
+            IconButton(
+              icon: Icon(Icons.check_box,),
+              onPressed:  () {
+                setState(() {
+                  pageNum = 2;
+                });
+              },
+              alignment: Alignment.center,
+              iconSize: 36,
+            ),
+            Text("Attendence")
+          ],
+        ),
+        Column(
+          children: [
+            IconButton(
+                icon: Icon(Icons.note),
+                onPressed:  () {
+                  setState(() {
+                    pageNum = 3;
+                  });
+                },
+                alignment: Alignment.center,
+                iconSize: 36
+            ),
+            Text("Notes")
+          ],
+        ),
+        Column(
+          children: [
+            IconButton(
+                icon: Icon(Icons.message),
+                onPressed:  () {
+                  setState(() {
+                    pageNum = 4;
+                  });
+                },
+                alignment: Alignment.center,
+                iconSize: 36
+            ),
+            Text("Messages")
+          ],
+        ),
+        Column(
+          children: [
+            IconButton(
+                icon: Icon(Icons.settings),
+                onPressed:  () {
+                  setState(() {
+                    pageNum = 5;
+                  });
+                },
+                alignment: Alignment.center,
+                iconSize: 36
+            ),
+            Text("Settings"),
+          ],
+        ),
+      ],
+    );}
   }
 
 

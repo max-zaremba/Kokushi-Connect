@@ -3,10 +3,10 @@ import 'package:kokushi_connect/base_page.dart';
 import 'login_page.dart';
 import 'auth.dart';
 import 'db_control.dart';
-import 'home_page.dart';
 import 'globals.dart' as globals;
 import 'join_dojo_page.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RootPage extends StatefulWidget {
   RootPage({this.auth, this.db});
@@ -18,19 +18,26 @@ class RootPage extends StatefulWidget {
 }
 
 class _RootPageState extends State<RootPage> {
+  SharedPreferences prefs;
   bool _hasDojo = false;
-  bool _loading;
+  bool _loading = false;
 
   @override
   void initState() {
     super.initState();
-    _loading = true;
-    widget.auth.currentUser().then((userId) {
-      setState(() {
-        globals.authStatus = userId == null ? globals.AuthStatus.notSignedIn : globals.AuthStatus.signedIn;
-      });
+    isSignedIn();
+  }
+
+  void isSignedIn() async {
+    setState(() {
+      _loading = true;
     });
-    doesHaveDojo();
+
+    String userId = await widget.auth.currentUser();
+    setState(() {
+      globals.authStatus = userId == null ? globals.AuthStatus.notSignedIn : globals.AuthStatus.signedIn;
+    });
+    await doesHaveDojo();
   }
 
   Future<void> doesHaveDojo() async {
@@ -47,6 +54,7 @@ class _RootPageState extends State<RootPage> {
         });
       }
     }
+
     setState(() {
       _loading = false;
     });

@@ -44,7 +44,7 @@ class _LoginPageState extends State<LoginPage> {
 
   void moveToRegister() {
     Navigator.of(context).push(
-        new MaterialPageRoute(
+        MaterialPageRoute(
             builder: (BuildContext context) {
               return MaterialApp(
                 home: CreateUserPage(auth: widget.auth, db: widget.db),
