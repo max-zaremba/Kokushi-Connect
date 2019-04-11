@@ -45,6 +45,7 @@ class _StudentListPageState extends State<StudentListPage> {
     QuerySnapshot docs = await Firestore.instance.collection('dojos').document(dojoId).collection('members').getDocuments();
     docs.documents.forEach((document) async {
       String studentId = document.data.keys.first;
+      print("studentId: $studentId");
       Student stu = new Student();
       stu.id = studentId;
       stu.first_name = await widget.db.getFirstName(studentId);
@@ -55,8 +56,9 @@ class _StudentListPageState extends State<StudentListPage> {
       stu.rank = await widget.db.getRank(studentId);
       stu.description = await widget.db.getDescription(studentId);
       students.add(stu);
+      print("students: $students");
     });
-    print("in getDojoId: $students");
+    print("in getDojoId after for each: students: $students");
     setState(() {
       _loading = false;
     });
@@ -137,7 +139,6 @@ class _InfoPageState extends State<InfoPage> {
   @override
   InfoPage get widget => super.widget;
 
-  bool _isChecked = false;
   String _belt;
   String _status;
   String _firstName;
@@ -187,7 +188,25 @@ class _InfoPageState extends State<InfoPage> {
   void validateAndSubmit() async {
     try {
       String userId = await widget.auth.currentUser();
-      await Firestore.instance.collection('users').document(userId).setData({'firstName' : _firstName, 'lastName' :_lastName, 'nickname' : _nickname, 'description' : _description, 'rank' : _belt, 'accountType' :_status,});
+      DocumentReference doc = Firestore.instance.collection('users').document(userId);
+      if(_firstName != await widget.db.getFirstName(userId)){
+        await doc.setData({'firstName' : _firstName});
+      }
+      if(_lastName != await widget.db.getLastName(userId)){
+        await doc.setData({'lastName' :_lastName});
+      }
+      if(_nickname != await widget.db.getNickname(userId)){
+        await doc.setData({'nickname' : _nickname});
+      }
+      if(_description != await widget.db.getDescription(userId)){
+        await doc.setData({'description' : _description});
+      }
+      if(_belt != await widget.db.getRank(userId)){
+        await doc.setData({'rank' : _belt});
+      }
+      if(_status != await widget.db.getAccountType(userId)){
+        await doc.setData({'accountType' :_status});
+      }
     }
     catch (e) {
       print('Error: $e');

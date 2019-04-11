@@ -3,7 +3,6 @@ import 'package:kokushi_connect/base_page.dart';
 import 'login_page.dart';
 import 'auth.dart';
 import 'db_control.dart';
-import 'home_page.dart';
 import 'globals.dart' as globals;
 import 'join_dojo_page.dart';
 import 'package:auto_size_text/auto_size_text.dart';

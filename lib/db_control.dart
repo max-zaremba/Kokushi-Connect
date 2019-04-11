@@ -187,13 +187,6 @@ class Db implements Database {
     }
   }
 
-  // Future<DocumentSnapshot> getAllUsersByDojoId(String dojoId) async {
-  //   //TODO needs to be rewritten to work
-  //   DocumentSnapshot document = await dojoInfo(dojoId);
-
-  //   return document.data['members'];
-  // }
-
   //setters for dojo
   Future<void> setDojoCode(String code, String dojoId) async {
     return _firestore.collection("dojos").document(dojoId).updateData({ 'dojoCode': code});

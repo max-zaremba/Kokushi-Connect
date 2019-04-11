@@ -14,7 +14,6 @@ class BasePage extends StatefulWidget {
 }
 
 class _BasePageState extends State<BasePage> {
-  @override
 
   List <Widget> pages() {
     return [
