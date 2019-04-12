@@ -74,7 +74,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                 } else {
                   listMessage = snapshot.data.documents;
                   return ListView.builder(
-                    padding: new EdgeInsets.all(8.0),
+                    padding: new EdgeInsets.symmetric(vertical: 8.0),
                     reverse: true,
                     itemBuilder: (_, int index) => ChatMessage(
                       text: listMessage[index].data['content'],
@@ -84,6 +84,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                       ),
                       firstName: listMessage[index].data['firstName'],
                       lastName: listMessage[index].data['lastName'],
+                      messageColor: listMessage[index].data['userId'] == _userId ? Colors.blue.shade50 : Colors.white,
                     ),
                     itemCount: listMessage.length,
                     controller: listScrollController,
@@ -191,30 +192,33 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
 }
 
 class ChatMessage extends StatelessWidget {
-  ChatMessage({this.text, this.animationController, this.firstName, this.lastName});
+  ChatMessage({this.text, this.animationController, this.firstName, this.lastName, this.messageColor});
   final String text;
   final AnimationController animationController;
   final String firstName;
   final String lastName;
+  final Color messageColor;
 
   @override
   Widget build(BuildContext context) {
     return new Container(
-      margin: const EdgeInsets.symmetric(vertical: 10.0),
+      color: messageColor,
       child: new Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           new Container(
-            margin: const EdgeInsets.only(right: 16.0),
+            margin: const EdgeInsets.only(top: 10.0, bottom: 10.0, right: 16.0, left: 4.0),
             child: new CircleAvatar(child: new Text(firstName[0] + lastName[0])),
           ),
           new Expanded(
             child: new Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                new Text(firstName + ' ' + lastName, style: Theme.of(context).textTheme.subhead),
+                Container(
+                  margin: EdgeInsets.only(top: 10.0),
+                  child: new Text(firstName + ' ' + lastName, style: TextStyle(color: Colors.black54),)),
                 new Container(
-                  margin: const EdgeInsets.only(top: 5.0),
+                  margin: const EdgeInsets.only(top: 5.0, bottom: 10.0),
                   child: new Text(text),
                 ),
               ],

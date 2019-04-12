@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'auth.dart';
 import 'db_control.dart';
-import 'custom_app_bar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'chat_page.dart';
+import 'create_channel_page.dart';
 
 class ChannelsPage extends StatefulWidget {
   ChannelsPage({this.auth, this.db});
@@ -35,11 +35,17 @@ class _ChannelsPage extends State<ChannelsPage> {
       return CircularProgressIndicator();
     } else {
       return Scaffold(
-        appBar: CustomAppBar(
-          title: Text('Chat'),
-          context: context,
-          auth: widget.auth,
-          db: widget.db,
+        appBar: AppBar(
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.add),
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CreateChannelPage(auth: widget.auth, db: widget.db)),
+              ),
+            )
+          ],
+          title: Text("Chat"),
         ),
         body: StreamBuilder(
           stream: Firestore.instance.collection('users')
