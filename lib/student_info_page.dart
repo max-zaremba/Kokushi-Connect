@@ -101,13 +101,14 @@ class _StudentListPageState extends State<StudentListPage> {
       if (studentInfo['accountType'] != 'Coach'){
         Student stu = new Student();
         stu.id = document.documentID;
-        stu.first_name = studentInfo['firstName'];
-        stu.last_name = studentInfo['lastName'];
-        stu.nickname = studentInfo['nickname'];
-        stu.dob = studentInfo['dob'];
-        stu.status = studentInfo['accountType'];
-        stu.rank = studentInfo['rank'];
-        stu.description = studentInfo['description'];
+        stu.first_name = studentInfo['firstName'];//not editable
+        stu.last_name = studentInfo['lastName'];//not editable
+        stu.nickname = studentInfo['nickname'];//editable
+        stu.dob = studentInfo['dob'];//definite not editable
+        stu.status = studentInfo['accountType'];//editable
+        stu.rank = studentInfo['rank'];//editable
+        stu.description = studentInfo['description'];//editable
+        //add email, uneditable, phone, also uneditable, up to you -AO
 
         students.add(stu);
         stuTiles.add(ListTile(
