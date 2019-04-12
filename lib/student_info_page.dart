@@ -42,23 +42,11 @@ class _StudentListPageState extends State<StudentListPage> {
   void getDojoId() async {
     dojoId = await widget.db.getUserDojo(await widget.auth.currentUser());
     print("Current dojo $dojoId");
-    QuerySnapshot docs = await Firestore.instance.collection('dojos').document(dojoId).collection('members').getDocuments();
+    /*QuerySnapshot docs = await Firestore.instance.collection('dojos').document(dojoId).collection('members').getDocuments();
     docs.documents.forEach((document) async {
-      String studentId = document.data.keys.first;
-      print("studentId: $studentId");
-      Student stu = new Student();
-      stu.id = studentId;
-      stu.first_name = await widget.db.getFirstName(studentId);
-      stu.last_name = await widget.db.getLastName(studentId);
-      stu.nickname = await widget.db.getNickname(studentId);
-      stu.dob = await widget.db.getDOB(studentId);
-      stu.status = await widget.db.getAccountType(studentId);
-      stu.rank = await widget.db.getRank(studentId);
-      stu.description = await widget.db.getDescription(studentId);
-      students.add(stu);
-      print("students: $students");
+      
     });
-    print("in getDojoId after for each: students: $students");
+    print("in getDojoId after for each: students: $students");*/
     setState(() {
       _loading = false;
     });
@@ -69,7 +57,7 @@ class _StudentListPageState extends State<StudentListPage> {
     if (_loading) {
       return CircularProgressIndicator();
     } else {
-      /*return Scaffold(
+      return Scaffold(
           appBar: CustomAppBar(
             title: Text('Student Info'),
             context: context,
@@ -77,18 +65,19 @@ class _StudentListPageState extends State<StudentListPage> {
             db: widget.db,
           ),
           body: StreamBuilder(
-            stream: Firestore.instance.collection('dojos')
-                .document(dojoId)
-                .collection('members')
+            stream: Firestore.instance
+                .collection('users')
+                .where('dojoId', isEqualTo: dojoId)
                 .snapshots(),
             builder: (BuildContext context,
                 AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasError) return Text("Error!");
               else if (!snapshot.hasData) return Text("No Students");
-              return ListView(children: getStudents(),);
+              return ListView(children: getStudents(snapshot),);
             },
-          ) */
-        return Scaffold(
+          )
+        );
+        /*return Scaffold(
           appBar: CustomAppBar(
             title: Text('Student Info'),
             context: context,
@@ -96,28 +85,46 @@ class _StudentListPageState extends State<StudentListPage> {
             db: widget.db,
           ),
           body: ListView(children: getStudents(),)
-        );
+        );*/
     }
   }
 
-  getStudents() {
+  getStudents(AsyncSnapshot<QuerySnapshot> snapshot) {
     print("Get students called");
     print(students);
-    List<ListTile> stdnts = [];
-    for(Student stu in students){
-      stdnts.add(ListTile(
-            title: Text(stu.first_name + " " + stu.last_name),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => InfoPage(auth: widget.auth, db: widget.db, student: stu),
-                ),
-              );
-            },
-          ));
-    }
-    return stdnts;
+    print("students: $students");
+
+    List<ListTile> stuTiles = [];
+
+    snapshot.data.documents.forEach((document) {
+      Map<String, dynamic> studentInfo = document.data;
+      if (studentInfo['accountType'] != 'Coach'){
+        Student stu = new Student();
+        stu.id = document.documentID;
+        stu.first_name = studentInfo['firstName'];
+        stu.last_name = studentInfo['lastName'];
+        stu.nickname = studentInfo['nickname'];
+        stu.dob = studentInfo['dob'];
+        stu.status = studentInfo['accountType'];
+        stu.rank = studentInfo['rank'];
+        stu.description = studentInfo['description'];
+
+        students.add(stu);
+        stuTiles.add(ListTile(
+              title: Text(studentInfo['firstName'] + " " + studentInfo['lastName']),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => InfoPage(auth: widget.auth, db: widget.db, student: stu),
+                  ),
+                );
+              },
+            ));
+      }
+    });
+    
+    return stuTiles;
   }
 }
 
@@ -189,6 +196,7 @@ class _InfoPageState extends State<InfoPage> {
     try {
       String userId = await widget.auth.currentUser();
       DocumentReference doc = Firestore.instance.collection('users').document(userId);
+      //remove edit access for first and last name
       if(_firstName != await widget.db.getFirstName(userId)){
         await doc.setData({'firstName' : _firstName});
       }
