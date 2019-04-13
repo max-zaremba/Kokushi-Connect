@@ -5,25 +5,24 @@ import 'package:kokushi_connect/custom_app_bar.dart';
 import 'package:kokushi_connect/db_control.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 
-class CreateEventPage extends StatefulWidget {
-  CreateEventPage({this.auth, this.db, this.date});
+class CreateClassPage extends StatefulWidget {
+  CreateClassPage({this.auth, this.db});
 
   final BaseAuth auth;
   final Database db;
-  final DateTime date;
 
-  State<StatefulWidget> createState() => _CreateEventPageState();
+  State<StatefulWidget> createState() => _CreateClassPageState();
 }
 
-class _CreateEventPageState extends State<CreateEventPage> {
+class _CreateClassPageState extends State<CreateClassPage> {
 
   final formKey = GlobalKey<FormState>();
-  DateTime _startDate = DateTime.now();
-  DateTime _endDate = DateTime.now();
-  DateTime _repeatUntil;
+  DateTime _startTime = DateTime.now();
+  DateTime _endTime = DateTime.now();
+  DateTime _repeatUntil = DateTime.now().add(new Duration(days: 30));
   String _title;
   String _description;
-  List<bool> _repeats = [false, false, false, false, false, false, false];
+  List<bool> _daysOfWeek = [false, false, false, false, false, false, false];
   InputType inputTypeDate = InputType.date;
   InputType inputTypeTime = InputType.time;
 
@@ -37,16 +36,25 @@ class _CreateEventPageState extends State<CreateEventPage> {
   }
 
   void validateAndSubmit() async {
-    DateTime currentDay = _startDate;
+    DateTime currentDay = await _startTime;
     while (_repeatUntil.isAfter(currentDay)) {
-      try {
-        final String userId = await widget.auth.currentUser();
-        final String dojoId = await widget.db.getDojoIdByUserId(userId);
-        await widget.db.createEvent(_startDate, _endDate, _title, _description, userId, dojoId);
+      print("c: " + currentDay.weekday.toString());
+      print("s: " + _startTime.day.toString());
+      print("e: " + _endTime.day.toString());
+      if (_daysOfWeek[currentDay.weekday % 7]) {
+        try {
+          final String userId = await widget.auth.currentUser();
+          final String dojoId = await widget.db.getDojoIdByUserId(userId);
+          await widget.db.createEvent(
+              _startTime, _endTime, _title, _description, userId, dojoId);
+        }
+        catch (e) {
+          print('Error: $e');
+        }
       }
-      catch (e) {
-        print('Error: $e');
-      }
+      currentDay = await currentDay.add(new Duration(days: 1));
+      _startTime = await _startTime.add(new Duration(days: 1));
+      _endTime = await _endTime.add(new Duration(days: 1));
     }
   }
 
@@ -60,47 +68,50 @@ class _CreateEventPageState extends State<CreateEventPage> {
         db: widget.db,
       ),
       body: Container(
-      padding: EdgeInsets.all(16.0),
-      child: Form(
-          key: formKey,
-          child: ListView(
-              children: buildInputs()
-          )
+        padding: EdgeInsets.all(16.0),
+        child: Form(
+            key: formKey,
+            child: ListView(
+                children: buildInputs()
+            )
         ),
       ),
     );
   }
 
-  void createEvent() {
+  void createEvent() async {
     if (validateAndSave()) {
-      validateAndSubmit();
+      await validateAndSubmit();
       Navigator.pop(context);
     }
   }
 
   List<Widget> buildInputs () {
-   if (widget.date != null) {
-     _startDate = widget.date;
-   }
-
-   return[
+    return[
       DateTimePickerFormField(
         decoration: InputDecoration(labelText: 'Start Date and Time'),
         inputType: InputType.both,
         format: DateFormat("EEEE, MMMM d, yyyy 'at' h:mma"),
-        onSaved: (value) => _startDate = value,
-        initialValue: _startDate,
+        onSaved: (value) => _startTime = value,
+        initialValue: _startTime,
       ),
 
       DateTimePickerFormField(
         decoration: InputDecoration(labelText: 'End Date and Time'),
         inputType: InputType.both,
         format: DateFormat("EEEE, MMMM d, yyyy 'at' h:mma"),
-        onSaved: (value) => _endDate = value,
+        onSaved: (value) => _endTime = value,
       ),
 
       Text("\nRepeat", style: new TextStyle(fontSize: 18),),
       repeatRow(),
+
+      DateTimePickerFormField(
+        decoration: InputDecoration(labelText: 'End Date and Time'),
+        inputType: InputType.both,
+        format: DateFormat("EEEE, MMMM d, yyyy 'at' h:mma"),
+        onSaved: (value) => _repeatUntil = value,
+      ),
 
       TextFormField(
         decoration: InputDecoration(labelText: 'Title'),
@@ -124,70 +135,70 @@ class _CreateEventPageState extends State<CreateEventPage> {
     return Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
       new Flexible (child: CheckboxListTile(
         title: Text('S'),
-        value: _repeats[0],
+        value: _daysOfWeek[0],
         onChanged: (bool newValue) {
           setState(() {
-            _repeats[0] = newValue;
+            _daysOfWeek[0] = newValue;
           });
         },
       )),
 
       new Flexible (child: CheckboxListTile(
         title: Text('M'),
-        value: _repeats[1],
+        value: _daysOfWeek[1],
         onChanged: (bool newValue) {
           setState(() {
-            _repeats[1] = newValue;
+            _daysOfWeek[1] = newValue;
           });
         },
       )),
 
       new Flexible (child: CheckboxListTile(
         title: Text('T'),
-        value: _repeats[2],
+        value: _daysOfWeek[2],
         onChanged: (bool newValue) {
           setState(() {
-            _repeats[2] = newValue;
+            _daysOfWeek[2] = newValue;
           });
         },
       )),
 
       new Flexible (child: CheckboxListTile(
         title: Text('W'),
-        value: _repeats[3],
+        value: _daysOfWeek[3],
         onChanged: (bool newValue) {
           setState(() {
-            _repeats[3] = newValue;
+            _daysOfWeek[3] = newValue;
           });
         },
       )),
 
       new Flexible (child: CheckboxListTile(
         title: Text('T'),
-        value: _repeats[4],
+        value: _daysOfWeek[4],
         onChanged: (bool newValue) {
           setState(() {
-            _repeats[4] = newValue;
+            _daysOfWeek[4] = newValue;
           });
         },
       )),
 
       new Flexible(child: CheckboxListTile(
         title: Text('F'),
-        value: _repeats[5],
+        value: _daysOfWeek[5],
         onChanged: (bool newValue) {
           setState(() {
-            _repeats[5] = newValue;
+            _daysOfWeek[5] = newValue;
           });
         },
       )),
 
       new Flexible (child: CheckboxListTile(
         title: Text('S'),
-        value: _repeats[6],
+        value: _daysOfWeek[6],
         onChanged: (bool newValue) {
           setState(() {
-            _repeats[6] = newValue;
+            _daysOfWeek[6] = newValue;
           });
         },
       )),

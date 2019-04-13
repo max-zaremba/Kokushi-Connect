@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calendar_carousel/classes/event.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
+import 'package:kokushi_connect/create_class_page.dart';
 import 'package:kokushi_connect/create_event_page.dart';
 import 'auth.dart';
 import 'db_control.dart';
@@ -31,7 +32,7 @@ class _CalendarPageState extends State<CalendarPage> {
 
       body: Container(
         child: Column(children: [
-          new CalendarCarousel(
+          CalendarCarousel(
             height: 410,
             onDayPressed: (DateTime date, List<Event> events) {
               this.setState(() => _currentDate = date);
@@ -60,7 +61,7 @@ class _CalendarPageState extends State<CalendarPage> {
   void moveToCreateEventPage() {
     Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => CreateEventPage(auth: widget.auth, db: widget.db),
+          builder: (context) => CreateClassPage(auth: widget.auth, db: widget.db),
         )
     );
   }
@@ -79,10 +80,8 @@ class EventPage extends StatefulWidget {
 
 class _EventPageState extends State<EventPage>{
   @override
-  String e = "Hello";
-  List<Widget> eventList;
   List<String> months = [
-    "nulltober",
+    "Nulltober",
     "January",
     "Febuary",
     "March",
@@ -98,33 +97,42 @@ class _EventPageState extends State<EventPage>{
   ];
 
   Widget build(BuildContext context) {
-    //getEventList(widget.date);
     return Scaffold(
       appBar: CustomAppBar(
-        title: Text("Events for " + months[widget.date.month] + " " + widget.date.day.toString() + ", " + widget.date.year.toString()),
+        title: Text(months[widget.date.month] + " " + widget.date.day.toString() + ", " + widget.date.year.toString()),
         context: context,
         auth: widget.auth,
         db: widget.db,
       ),
 
       body: Container(
-        child: ListView(children: eventList),
+        child: Column(children: [
+          new Expanded(child: ListView(children: getEventList(widget.date))),
+          RaisedButton(
+            child: Text('Create New Event', style: TextStyle(fontSize: 20)),
+            onPressed: moveToCreateEventPage,
+
+          ),
+        ]),
+        padding: const EdgeInsets.symmetric(vertical: 10.0),
       ),
     );
   }
 
-  void getEventList(DateTime date) async {
-    el();
-    List<ListTile> list = new List(20);
-    for (int i = 0; i < list.length; i++) {
-      list[i] = new ListTile(title: Text(e));
-    }
-    eventList = await list;
+  void moveToCreateEventPage() {
+    Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => CreateEventPage(auth: widget.auth, db: widget.db, date: widget.date,),
+        )
+    );
   }
 
-  void el () async {
-    e = await widget.db.getEventTitle("LOMfqr7ew2G2jTgdVEuG");
-    print(e);
+  List<Widget> getEventList(DateTime date) {
+    List<ListTile> list = new List(20);
+    for (int i = 0; i < list.length; i++) {
+      list[i] = new ListTile(title: Text("We will be doing Judo, Come join us"));
+    }
+    return list;
   }
 
 }
