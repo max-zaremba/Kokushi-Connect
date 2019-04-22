@@ -112,7 +112,7 @@ class _StudentListPageState extends State<StudentListPage> {
 
         students.add(stu);
         stuTiles.add(ListTile(
-              title: Text(studentInfo['firstName'] + " " + studentInfo['lastName']),
+              title: Text(stu.first_name + " " + stu.last_name),
               onTap: () {
                 Navigator.push(
                   context,
@@ -128,7 +128,6 @@ class _StudentListPageState extends State<StudentListPage> {
     return stuTiles;
   }
 }
-
 
 class InfoPage extends StatefulWidget {
   final Student student;
@@ -200,21 +199,27 @@ class _InfoPageState extends State<InfoPage> {
       //remove edit access for first and last name
       if(_firstName != await widget.db.getFirstName(userId)){
         await doc.setData({'firstName' : _firstName});
+        print("firstname changed.");
       }
       if(_lastName != await widget.db.getLastName(userId)){
         await doc.setData({'lastName' :_lastName});
+        print("lastname changed.");
       }
       if(_nickname != await widget.db.getNickname(userId)){
         await doc.setData({'nickname' : _nickname});
+        print("nickname changed.");
       }
       if(_description != await widget.db.getDescription(userId)){
         await doc.setData({'description' : _description});
+        print("description changed.");
       }
       if(_belt != await widget.db.getRank(userId)){
         await doc.setData({'rank' : _belt});
+        print("rank changed.");
       }
       if(_status != await widget.db.getAccountType(userId)){
         await doc.setData({'accountType' :_status});
+        print("accounttype changed.");
       }
     }
     catch (e) {
