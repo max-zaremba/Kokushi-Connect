@@ -49,9 +49,8 @@ class _ChannelsPage extends State<ChannelsPage> {
           title: Text("Chat"),
         ),
         body: StreamBuilder(
-          stream: Firestore.instance.collection('users')
-              .document(userId)
-              .collection('channels')
+          stream: Firestore.instance.collection('channels')
+              .where('members.$userId', isGreaterThan: '')
               .snapshots(),
           builder: (BuildContext context,
               AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -68,7 +67,24 @@ class _ChannelsPage extends State<ChannelsPage> {
   getChannels(AsyncSnapshot<QuerySnapshot> snapshot) {
     List<ListTile> channels = [];
     snapshot.data.documents.forEach((document) {
-      channels.add(ListTile(title: Text(document.data.keys.first), onTap: () => moveToChatPage(document.data.keys.first),));
+      String groupName = '';
+      if (document.data['name'] != '')
+        groupName = document.data['name'];
+      else {
+        Map<String, String> users = Map.from(document.data['members']);
+        int numUsers = users.length - 1;
+        users.forEach((uId, name) {
+          if (uId != userId) {
+            groupName += name;
+            if (numUsers > 2)
+              groupName += ', ';
+            numUsers--;
+            if (numUsers == 1)
+              groupName += ' & ';
+          }
+        });
+      }
+      channels.add(ListTile(title: Text(groupName), onTap: () => moveToChatPage(document.documentID),));
     });
     return channels;
   }
