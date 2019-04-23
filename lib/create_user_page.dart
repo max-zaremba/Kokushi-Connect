@@ -66,7 +66,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
       String userId = await widget.auth.createUserWithEmailAndPassword(_email, _password);
       await widget.db.createAccount(_firstName, _lastName, _nickname, _dob, _belt, _accountType, _description, userId);
     }
-    catch (e) {
+    catch(e) {
       print('Error: $e');
     }
   }
