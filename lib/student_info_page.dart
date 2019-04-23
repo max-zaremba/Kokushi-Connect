@@ -194,17 +194,9 @@ class _InfoPageState extends State<InfoPage> {
 
   void validateAndSubmit() async {
     try {
-      String userId = await widget.auth.currentUser();
+      String userId = widget.student.id;
       DocumentReference doc = Firestore.instance.collection('users').document(userId);
       //remove edit access for first and last name
-      if(_firstName != await widget.db.getFirstName(userId)){
-        await doc.updateData({'firstName' : _firstName});
-        print("firstname changed.");
-      }
-      if(_lastName != await widget.db.getLastName(userId)){
-        await doc.updateData({'lastName' :_lastName});
-        print("lastname changed.");
-      }
       if(_nickname != await widget.db.getNickname(userId)){
         await doc.updateData({'nickname' : _nickname});
         print("nickname changed.");
@@ -217,10 +209,10 @@ class _InfoPageState extends State<InfoPage> {
         await doc.updateData({'rank' : _belt});
         print("rank changed.");
       }
-      if(_status != await widget.db.getAccountType(userId)){
-        await doc.updateData({'accountType' :_status});
-        print("accounttype changed.");
-      }
+      //if(_status != await widget.db.getAccountType(userId)){
+      //  await doc.updateData({'accountType' :_status});
+      //  print("accounttype changed.");
+      //}
     }
     catch (e) {
       print('Error: $e');
