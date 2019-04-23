@@ -92,13 +92,13 @@ class _CreateUserPageState extends State<CreateUserPage> {
     if (validateAndSave()) {
       validateAndSubmit();
       Navigator.of(context).push(
-          new MaterialPageRoute(
-              builder: (BuildContext context) {
-                return MaterialApp(
-                  home: CreateDojoPage(auth: widget.auth, db: widget.db),
-                );
-              }
-          )
+        new MaterialPageRoute(
+          builder: (BuildContext context) {
+            return MaterialApp(
+              home: CreateDojoPage(auth: widget.auth, db: widget.db),
+            );
+          }
+        )
       );
     }
   }
