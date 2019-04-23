@@ -251,6 +251,8 @@ class _InfoPageState extends State<InfoPage> {
                                     ),
                                   ),
                                   onSaved: (value) => _firstName = value,
+                                  initialValue: widget.student.first_name,
+                                  enabled: false,
                                 )
                             )
                           ]
@@ -273,6 +275,8 @@ class _InfoPageState extends State<InfoPage> {
                                       ),
                                     ),
                                     onSaved: (value) => _lastName = value,
+                                    initialValue: widget.student.last_name,
+                                    enabled: false,
                                   )
                               )
                             ]
@@ -315,6 +319,7 @@ class _InfoPageState extends State<InfoPage> {
                         )
                     ),
 
+                    //status
                     Padding(
                       padding: EdgeInsets.only(top: 15.0, right: 15.0, left: 15.0),
                       child: Row(
@@ -338,6 +343,7 @@ class _InfoPageState extends State<InfoPage> {
                       )
                     ),
 
+                    //rank
                     Padding(
                       padding: EdgeInsets.only(top: 15.0, right: 15.0, left: 15.0),
                       child: Row(
@@ -369,6 +375,7 @@ class _InfoPageState extends State<InfoPage> {
                         )
                     ),
 
+                    //save button
                     Padding(
                         padding: EdgeInsets.only(top: 10.0, bottom: 15.0),
                         child: Align(
