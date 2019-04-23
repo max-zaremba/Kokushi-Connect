@@ -23,6 +23,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
   String _password;
   String _firstName;
   String _lastName;
+  String _nickname;
   DateTime _dob;
   String _belt;
   List<DropdownMenuItem<String>> belts = [
@@ -48,6 +49,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
     DropdownMenuItem<String>(child: Text("Black, Judan"), value: "Judan")
   ];
   String _accountType = "Student";
+  String _description = "";
   InputType inputType = InputType.date;
 
   bool validateAndSave() {
@@ -62,9 +64,9 @@ class _CreateUserPageState extends State<CreateUserPage> {
   void validateAndSubmit() async {
     try {
       String userId = await widget.auth.createUserWithEmailAndPassword(_email, _password);
-      await widget.db.createAccount(_firstName, _lastName, _dob, _belt, _accountType, userId);
+      await widget.db.createAccount(_firstName, _lastName, _nickname, _dob, _belt, _accountType, _description, userId);
     }
-    catch (e) {
+    catch(e) {
       print('Error: $e');
     }
   }
@@ -155,6 +157,12 @@ class _CreateUserPageState extends State<CreateUserPage> {
         textCapitalization: TextCapitalization.sentences,
         validator: (value) => value.isEmpty? 'Last Name can\'t be empty' : null,
         onSaved: (value) => _lastName = value,
+      ),
+      TextFormField(
+        decoration: InputDecoration(labelText: "Nickname"),
+        textCapitalization: TextCapitalization.sentences,
+        validator: (value) => value.isEmpty? 'Nickname can\'t be empty' : null,
+        onSaved: (value) => _nickname = value,
       ),
 
       DateTimePickerFormField(
