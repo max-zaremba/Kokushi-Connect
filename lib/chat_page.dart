@@ -50,9 +50,9 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
       appBar: AppBar(
         actions: <Widget>[
           FlatButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              }
+            onPressed: () {
+              Navigator.of(context).pop();
+            }, child: null,
           )],
         title: Text("Messages"),
       ),
