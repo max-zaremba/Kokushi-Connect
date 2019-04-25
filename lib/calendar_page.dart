@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calendar_carousel/classes/event.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
@@ -78,8 +79,23 @@ class EventPage extends StatefulWidget {
   State<StatefulWidget> createState() => _EventPageState();
 }
 
+class CalendarEvent {
+  String id;
+  String title;
+  String description;
+  DateTime start;
+  DateTime end;
+  String userId;
+
+  CalendarEvent();
+}
+
 class _EventPageState extends State<EventPage>{
   @override
+
+  String dojoId = "";
+  List<CalendarEvent> eventList;
+  
   List<String> months = [
     "Nulltober",
     "January",
@@ -96,6 +112,37 @@ class _EventPageState extends State<EventPage>{
     "December",
   ];
 
+  getStudents(AsyncSnapshot<QuerySnapshot> snapshot) {
+    print("Get students called");
+    List<ListTile> eventTiles = [];
+    snapshot.data.documents.forEach((document) {
+      Map<String, dynamic> eventInfo = document.data;
+      //if (eventInfo['accountType'] != 'Coach'){
+        CalendarEvent event = new CalendarEvent();
+        event.id = document.documentID;
+        event.start = eventInfo['startDate'];//not editable
+        event.end = eventInfo['endDate'];//not editable
+        event.title = eventInfo['title'];//editable
+        event.userId = eventInfo['userId'];//definite not editable
+        event.description = eventInfo['description'];//editable
+        //add email, uneditable, phone, also uneditable, up to you -AO
+      //}
+      eventList.add(event);
+      eventTiles.add(new ListTile(title: Text(event.title + " " + event.start.day.toString()),));
+    });
+
+    return eventTiles;
+  }
+
+  void getDojoId() async {
+    dojoId = await widget.db.getUserDojo(await widget.auth.currentUser());
+    /*QuerySnapshot docs = await Firestore.instance.collection('dojos').document(dojoId).collection('members').getDocuments();
+    docs.documents.forEach((document) async {
+
+    });
+    print("in getDojoId after for each: students: $students");*/
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
@@ -107,7 +154,18 @@ class _EventPageState extends State<EventPage>{
 
       body: Container(
         child: Column(children: [
-          new Expanded(child: ListView(children: getEventList(widget.date))),
+          new Expanded(child: StreamBuilder(
+            stream: Firestore.instance
+                .collection('events')
+                .where('dojoId', isEqualTo: dojoId)
+                .snapshots(),
+            builder: (BuildContext context,
+                AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.hasError) return Text("Error!");
+              else if (!snapshot.hasData) return Text("No Students");
+              return ListView(children: getStudents(snapshot),);
+            },
+          )),
           RaisedButton(
             child: Text('Create New Event', style: TextStyle(fontSize: 20)),
             onPressed: moveToCreateEventPage,

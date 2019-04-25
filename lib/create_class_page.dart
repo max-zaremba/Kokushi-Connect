@@ -107,14 +107,14 @@ class _CreateClassPageState extends State<CreateClassPage> {
       repeatRow(),
 
       DateTimePickerFormField(
-        decoration: InputDecoration(labelText: 'End Date and Time'),
+        decoration: InputDecoration(labelText: 'Repeat Until'),
         inputType: InputType.both,
         format: DateFormat("EEEE, MMMM d, yyyy 'at' h:mma"),
         onSaved: (value) => _repeatUntil = value,
       ),
 
       TextFormField(
-        decoration: InputDecoration(labelText: 'Title'),
+        decoration: InputDecoration(labelText: 'Class Name'),
         validator: (value) => value.isEmpty? 'Title can\'t be empty' : null,
         onSaved: (value) => _title = value,
       ),
