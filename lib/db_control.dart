@@ -5,9 +5,11 @@ abstract class Database {
   //user getters 
   Future<String> getFirstName(String userId);
   Future<String> getLastName(String userId);
+  Future<String> getNickname(String userId);
   Future<String> getEmail(String userId);
   Future<DateTime> getDOB(String userId);
   Future<String> getRank(String userId);
+  Future<String> getDescription(String userId);
   Future<String> getDojoIdByUserId(String userId);
   Future<String> getAccountType(String userId);
   Future<String> getUserDojo(String userId);
@@ -15,24 +17,27 @@ abstract class Database {
   //user setters
   Future<void> setFirstName(String firstName, String userId);
   Future<void> setLastName(String lastName, String userId);
+  Future<void> setNickname(String nickname, String userId);
   Future<void> setEmail(String email, String userId);
   Future<void> setDOB(DateTime dob, String userId);
   Future<void> setRank(String rank, String userId);
+  Future<void> setDescription(String description, String userId);
   Future<void> setDojoIdForUser(String dojoId, String userId);
   Future<void> setAccountType(String accountType, String userId);
   Future<void> setUserDojo(String dojoId, String userId);
 
   //create
   Future<void> createDojo(String dojoName, String address, String dojoCode);
-  Future<void> createAccount(String firstName, String lastName, DateTime dob, String rank, String accountType, String userId); //creates a new account
   Future<void> createEvent(DateTime startDate, DateTime endDate, String title, String description, String userId, String dojoId);
+  Future<void> createAccount(String firstName, String lastName, String nickname, DateTime dob, String rank, String accountType, String description, String userId); //creates a new account
 
   //dojo getters
   Future<String> getDojoName(String dojoId);
   Future<String> getDojoCode(String dojoId);
   Future<String> getDojoAddress(String dojoId);
   Future<String> getDojoIdByDojoCode(String dojoCode);
-  
+  //Future<DocumentSnapshot> getAllUsersByDojoId(String dojoId);
+
   //dojo setters
   Future<void> setDojoCode(String code, String dojoId);
   Future<void> setDojoName(String name, String dojoId);
@@ -51,7 +56,7 @@ abstract class Database {
 class Db implements Database {
   final Firestore _firestore = Firestore.instance;
 
-  //gets all user information
+  //gets all of one users information
   Future<DocumentSnapshot> userInfo(String userId) async {
     return _firestore.collection('users').document(userId).get();
   }
@@ -67,6 +72,11 @@ class Db implements Database {
     return document.data['lastName'];
   }
 
+  Future<String> getNickname(String userId) async {
+    DocumentSnapshot document = await userInfo(userId);
+    return document.data['nickname'];
+  }
+
   Future<String> getEmail(String userId) async {
     DocumentSnapshot document = await userInfo(userId);
     return document.data['email'];
@@ -80,6 +90,11 @@ class Db implements Database {
   Future<String> getRank(String userId) async {
     DocumentSnapshot document = await userInfo(userId);
     return document.data['rank'];
+  }
+
+  Future<String> getDescription(String userId) async {
+    DocumentSnapshot document = await userInfo(userId);
+    return document.data['description'];
   }
 
   Future<String> getDojoIdByUserId(String userId) async {
@@ -106,6 +121,10 @@ class Db implements Database {
     return _firestore.collection("users").document(userId).updateData({ 'lastName': lastName});
   }
 
+  Future<void> setNickname(String nickname, String userId) async {
+    return _firestore.collection("users").document(userId).updateData({ 'nickname': nickname});
+  }
+
   Future<void> setEmail(String email, String userId) async {
     return _firestore.collection("users").document(userId).updateData({ 'email': email});
   }
@@ -116,6 +135,10 @@ class Db implements Database {
 
   Future<void> setRank(String rank, String userId) async {
     return _firestore.collection("users").document(userId).updateData({ 'rank': rank});
+  }
+
+  Future<void> setDescription(String description, String userId) async {
+    return _firestore.collection("users").document(userId).updateData({ 'description': description});
   }
 
   Future<void> setDojoIdForUser(String dojoId, String userId) async {
@@ -132,8 +155,8 @@ class Db implements Database {
   }
 
   //account and dojo creation
-  Future<void> createAccount(String firstName, String lastName, DateTime dob, String rank, String accountType, String userId) async {
-    return _firestore.collection("users").document(userId).setData({ 'firstName': firstName, 'lastName': lastName, 'dob': dob, 'rank': rank, 'accountType': accountType, 'dojoId': null });
+  Future<void> createAccount(String firstName, String lastName, String nickname, DateTime dob, String rank, String accountType, String description, String userId) async {
+    return _firestore.collection("users").document(userId).setData({ 'firstName': firstName, 'lastName': lastName, 'nickname': nickname, 'dob': dob, 'rank': rank, 'accountType': accountType, 'description': description, 'dojoId': null });
   }
 
   Future<String> createDojo(String dojoName, String address, String dojoCode) async {
@@ -153,17 +176,17 @@ class Db implements Database {
 
   //getters for dojo
   Future<String> getDojoName([String dojoId]) async {
-    DocumentSnapshot document = await userInfo(dojoId);
+    DocumentSnapshot document = await dojoInfo(dojoId);
     return document.data['dojoName'];
   }
 
   Future<String> getDojoCode(String dojoId) async {
-    DocumentSnapshot document = await userInfo(dojoId);
+    DocumentSnapshot document = await dojoInfo(dojoId);
     return document.data['dojoCode'];
   }
 
   Future<String> getDojoAddress(String dojoId) async {
-    DocumentSnapshot document = await userInfo(dojoId);
+    DocumentSnapshot document = await dojoInfo(dojoId);
     return document.data['address'];
   }
   

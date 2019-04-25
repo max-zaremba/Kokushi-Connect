@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kokushi_connect/auth.dart';
 import 'package:kokushi_connect/base_page.dart';
+import 'package:kokushi_connect/custom_app_bar.dart';
 import 'db_control.dart';
 import 'custom_app_bar.dart';
 import 'home_page.dart';
