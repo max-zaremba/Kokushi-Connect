@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kokushi_connect/base_page.dart';
 import 'package:kokushi_connect/create_user_page.dart';
-import 'package:kokushi_connect/home_page.dart';
 import 'auth.dart';
 import 'db_control.dart';
 
@@ -45,11 +44,7 @@ class _LoginPageState extends State<LoginPage> {
   void moveToRegister() {
     Navigator.of(context).push(
         MaterialPageRoute(
-            builder: (BuildContext context) {
-              return MaterialApp(
-                home: CreateUserPage(auth: widget.auth, db: widget.db),
-              );
-            }
+          builder: (context) => CreateUserPage(auth: widget.auth, db: widget.db),
         )
     );
   }

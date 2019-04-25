@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kokushi_connect/auth.dart';
+import 'package:kokushi_connect/base_page.dart';
 import 'custom_app_bar.dart';
 import 'db_control.dart';
 import 'join_dojo_page.dart';
@@ -48,27 +49,17 @@ class _CreateDojoPageState extends State<CreateDojoPage> {
     if (validateAndSave()) {
       validateAndSubmit();
       Navigator.of(context).push(
-          new MaterialPageRoute(
-              builder: (BuildContext context) {
-                return MaterialApp(
-                  //TODO CreateHomePage
-                  home: HomePage(auth: widget.auth, db: widget.db),
-                );
-              }
-          )
+        MaterialPageRoute(
+          builder: (context) => BasePage(auth: widget.auth, db: widget.db),
+        )
       );
     }
   }
 
   void moveToJoinDojoPage() {
     Navigator.of(context).push(
-        new MaterialPageRoute(
-            builder: (BuildContext context) {
-              return MaterialApp(
-                //TODO CreateHomePage
-                home: JoinDojoPage(auth: widget.auth, db: widget.db),
-              );
-            }
+        MaterialPageRoute(
+          builder: (context) => JoinDojoPage(auth: widget.auth, db: widget.db),
         )
     );
   }
