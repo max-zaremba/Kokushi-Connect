@@ -3,8 +3,6 @@ import 'auth.dart';
 import 'db_control.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-const _name = "Your name";
-
 class ChatPage extends StatefulWidget {
   ChatPage({this.auth, this.db, this.channelId});
   final Auth auth;
@@ -16,7 +14,6 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
-  final List<ChatMessage> _messages = <ChatMessage>[];
   final TextEditingController _textController = new TextEditingController();
   final ScrollController listScrollController = new ScrollController();
 
@@ -78,10 +75,6 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                     reverse: true,
                     itemBuilder: (_, int index) => ChatMessage(
                       text: listMessage[index].data['content'],
-                      animationController: new AnimationController(
-                        duration: new Duration(milliseconds: 700),
-                        vsync: this,
-                      ),
                       firstName: listMessage[index].data['firstName'],
                       lastName: listMessage[index].data['lastName'],
                       messageColor: listMessage[index].data['userId'] == _userId ? Colors.blue.shade50 : Colors.white,
@@ -168,33 +161,12 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     });
 
     listScrollController.animateTo(0.0, duration: Duration(milliseconds: 300), curve: Curves.easeOut);
-
-    /*ChatMessage message = new ChatMessage(
-      text: text,
-      animationController: new AnimationController(
-        duration: new Duration(milliseconds: 700),
-        vsync: this,
-      ),
-    );
-    setState(() {
-      _messages.insert(0, message);
-    });
-    message.animationController.forward();
-    */
   }
-
-  /*@override
-  void dispose() {
-    for (ChatMessage message in _messages)
-      message.animationController.dispose();
-    super.dispose();
-  }*/
 }
 
 class ChatMessage extends StatelessWidget {
-  ChatMessage({this.text, this.animationController, this.firstName, this.lastName, this.messageColor});
+  ChatMessage({this.text, this.firstName, this.lastName, this.messageColor});
   final String text;
-  final AnimationController animationController;
   final String firstName;
   final String lastName;
   final Color messageColor;
