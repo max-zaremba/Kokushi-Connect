@@ -27,6 +27,7 @@ class _JoinDojoPageState extends State<JoinDojoPage> {
   void initState() {
     super.initState();
     widget.auth.currentUser().then((userId) {
+      print("UserID: $userId");
       widget.db.getAccountType(userId).then((accountType) {
         if (accountType == "Coach") {
           setState(() {
