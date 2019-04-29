@@ -52,7 +52,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
           FlatButton(
               onPressed: () {
                 Navigator.of(context).pop();
-              }
+              }, child: null,
           )],
         title: Text("Messages"),
       ),

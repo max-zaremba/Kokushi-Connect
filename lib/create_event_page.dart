@@ -99,9 +99,6 @@ class _CreateEventPageState extends State<CreateEventPage> {
         onSaved: (value) => _endDate = value,
       ),
 
-      Text("\nRepeat", style: new TextStyle(fontSize: 18),),
-      repeatRow(),
-
       TextFormField(
         decoration: InputDecoration(labelText: 'Title'),
         validator: (value) => value.isEmpty? 'Title can\'t be empty' : null,
@@ -119,79 +116,4 @@ class _CreateEventPageState extends State<CreateEventPage> {
       ),
     ];
   }
-
-  Widget repeatRow () {
-    return Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-      new Flexible (child: CheckboxListTile(
-        title: Text('S'),
-        value: _repeats[0],
-        onChanged: (bool newValue) {
-          setState(() {
-            _repeats[0] = newValue;
-          });
-        },
-      )),
-
-      new Flexible (child: CheckboxListTile(
-        title: Text('M'),
-        value: _repeats[1],
-        onChanged: (bool newValue) {
-          setState(() {
-            _repeats[1] = newValue;
-          });
-        },
-      )),
-
-      new Flexible (child: CheckboxListTile(
-        title: Text('T'),
-        value: _repeats[2],
-        onChanged: (bool newValue) {
-          setState(() {
-            _repeats[2] = newValue;
-          });
-        },
-      )),
-
-      new Flexible (child: CheckboxListTile(
-        title: Text('W'),
-        value: _repeats[3],
-        onChanged: (bool newValue) {
-          setState(() {
-            _repeats[3] = newValue;
-          });
-        },
-      )),
-
-      new Flexible (child: CheckboxListTile(
-        title: Text('T'),
-        value: _repeats[4],
-        onChanged: (bool newValue) {
-          setState(() {
-            _repeats[4] = newValue;
-          });
-        },
-      )),
-
-      new Flexible(child: CheckboxListTile(
-        title: Text('F'),
-        value: _repeats[5],
-        onChanged: (bool newValue) {
-          setState(() {
-            _repeats[5] = newValue;
-          });
-        },
-      )),
-
-      new Flexible (child: CheckboxListTile(
-        title: Text('S'),
-        value: _repeats[6],
-        onChanged: (bool newValue) {
-          setState(() {
-            _repeats[6] = newValue;
-          });
-        },
-      )),
-    ]);
-  }
-
 }
