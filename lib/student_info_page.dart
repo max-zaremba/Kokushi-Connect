@@ -182,6 +182,30 @@ class _InfoPageState extends State<InfoPage> {
     int diff = (dur.inDays/365).floor();
     return diff;
   }
+  
+  String initNickname() {
+    if (widget.student.nickname != null) {
+      return widget.student.nickname;
+    } else {
+      return "";
+    }
+  }
+
+  String initDescription() {
+    if (widget.student.nickname != null) {
+      return widget.student.description;
+    } else {
+      return "";
+    }
+  }
+
+  void initRank() {
+    _belt = widget.student.rank;
+  }
+
+  void initStatus() {
+    _status = widget.student.status;
+  }
 
   bool validateAndSave() {
     final form = formKey.currentState;
@@ -196,7 +220,6 @@ class _InfoPageState extends State<InfoPage> {
     try {
       String userId = widget.student.id;
       DocumentReference doc = Firestore.instance.collection('users').document(userId);
-      //remove edit access for first and last name
       if(_nickname != await widget.db.getNickname(userId)){
         await doc.updateData({'nickname' : _nickname});
         print("nickname changed.");
@@ -221,6 +244,9 @@ class _InfoPageState extends State<InfoPage> {
 
   @override
   Widget build(BuildContext context) {
+    initRank();
+    initStatus();
+
     return Scaffold(
         appBar: CustomAppBar(
           title: Text(widget.student.first_name + ' ' + widget.student.last_name),
@@ -296,6 +322,7 @@ class _InfoPageState extends State<InfoPage> {
                                     ),
                                   ),
                                   onSaved: (value) => _nickname = value,
+                                  initialValue: initNickname()
                                 )
                             )
                           ]
@@ -332,7 +359,6 @@ class _InfoPageState extends State<InfoPage> {
                                       child: Text(dropDownStringItem)
                                   );
                                 }).toList(),
-
                                 value: _status,
                                 onChanged: (value){ setState(() { _status = value; }); }
                             )
@@ -369,6 +395,7 @@ class _InfoPageState extends State<InfoPage> {
                               border: OutlineInputBorder(),
                             ),
                             onSaved: (value) => _description = value,
+                            initialValue: initDescription(),
                         )
                     ),
 
