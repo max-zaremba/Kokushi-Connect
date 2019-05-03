@@ -152,6 +152,8 @@ class _InfoPageState extends State<InfoPage> {
   String _lastName;
   String _nickname;
   String _description;
+  TextEditingController _nicknameController;
+  TextEditingController _descriptionController;
 
   var _studentStatuses = ['Student', 'Assistant Instructor'];
   var _ranks = [
@@ -177,6 +179,15 @@ class _InfoPageState extends State<InfoPage> {
     DropdownMenuItem<String>(child: Text("Black, Judan"), value: "Judan")
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    _belt = widget.student.rank;
+    _status = widget.student.status;
+    _nicknameController = new TextEditingController(text: widget.student.nickname);
+    _descriptionController = new TextEditingController(text: widget.student.description);
+  }
+
   int calculateAge() {
     Duration dur = DateTime.now().difference(widget.student.dob);
     int diff = (dur.inDays/365).floor();
@@ -197,14 +208,6 @@ class _InfoPageState extends State<InfoPage> {
     } else {
       return "";
     }
-  }
-
-  void initRank() {
-    _belt = widget.student.rank;
-  }
-
-  void initStatus() {
-    _status = widget.student.status;
   }
 
   bool validateAndSave() {
@@ -244,9 +247,6 @@ class _InfoPageState extends State<InfoPage> {
 
   @override
   Widget build(BuildContext context) {
-    initRank();
-    initStatus();
-
     return Scaffold(
         appBar: CustomAppBar(
           title: Text(widget.student.first_name + ' ' + widget.student.last_name),
@@ -315,14 +315,14 @@ class _InfoPageState extends State<InfoPage> {
                                 padding: EdgeInsets.only(right: 15.0),
                                 child: Text('Nickname')),
                             Expanded(
-                                child: TextFormField(
+                                child: TextField(
                                   decoration: InputDecoration(
                                     border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(5)
                                     ),
                                   ),
-                                  onSaved: (value) => _nickname = value,
-                                  initialValue: initNickname()
+                                  onChanged: (value){ setState(() { _nickname = value; }); },
+                                  controller: _nicknameController
                                 )
                             )
                           ]
@@ -388,14 +388,14 @@ class _InfoPageState extends State<InfoPage> {
                     Container(
                         margin: EdgeInsets.all(8.0),
                         padding: EdgeInsets.only(bottom: 10.0, right: 10.0, left: 10.0),
-                        child: TextFormField(
+                        child: TextField(
                             maxLines: 15,
                             decoration: InputDecoration(
                               hintText: "additional info...",
                               border: OutlineInputBorder(),
                             ),
-                            onSaved: (value) => _description = value,
-                            initialValue: initDescription(),
+                            onChanged: (value){ setState(() { _description = value; }); },
+                            controller: _descriptionController
                         )
                     ),
 
