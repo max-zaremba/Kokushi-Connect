@@ -152,6 +152,8 @@ class _InfoPageState extends State<InfoPage> {
   String _lastName;
   String _nickname;
   String _description;
+  TextEditingController _nicknameController;
+  TextEditingController _descriptionController;
 
   var _studentStatuses = ['Student', 'Assistant Instructor'];
   var _ranks = [
@@ -177,10 +179,35 @@ class _InfoPageState extends State<InfoPage> {
     DropdownMenuItem<String>(child: Text("Black, Judan"), value: "Judan")
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    _belt = widget.student.rank;
+    _status = widget.student.status;
+    _nicknameController = new TextEditingController(text: widget.student.nickname);
+    _descriptionController = new TextEditingController(text: widget.student.description);
+  }
+
   int calculateAge() {
     Duration dur = DateTime.now().difference(widget.student.dob);
     int diff = (dur.inDays/365).floor();
     return diff;
+  }
+  
+  String initNickname() {
+    if (widget.student.nickname != null) {
+      return widget.student.nickname;
+    } else {
+      return "";
+    }
+  }
+
+  String initDescription() {
+    if (widget.student.nickname != null) {
+      return widget.student.description;
+    } else {
+      return "";
+    }
   }
 
   bool validateAndSave() {
@@ -196,7 +223,6 @@ class _InfoPageState extends State<InfoPage> {
     try {
       String userId = widget.student.id;
       DocumentReference doc = Firestore.instance.collection('users').document(userId);
-      //remove edit access for first and last name
       if(_nickname != await widget.db.getNickname(userId)){
         await doc.updateData({'nickname' : _nickname});
         print("nickname changed.");
@@ -289,13 +315,14 @@ class _InfoPageState extends State<InfoPage> {
                                 padding: EdgeInsets.only(right: 15.0),
                                 child: Text('Nickname')),
                             Expanded(
-                                child: TextFormField(
+                                child: TextField(
                                   decoration: InputDecoration(
                                     border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(5)
                                     ),
                                   ),
-                                  onSaved: (value) => _nickname = value,
+                                  onChanged: (value){ setState(() { _nickname = value; }); },
+                                  controller: _nicknameController
                                 )
                             )
                           ]
@@ -332,7 +359,6 @@ class _InfoPageState extends State<InfoPage> {
                                       child: Text(dropDownStringItem)
                                   );
                                 }).toList(),
-
                                 value: _status,
                                 onChanged: (value){ setState(() { _status = value; }); }
                             )
@@ -362,13 +388,14 @@ class _InfoPageState extends State<InfoPage> {
                     Container(
                         margin: EdgeInsets.all(8.0),
                         padding: EdgeInsets.only(bottom: 10.0, right: 10.0, left: 10.0),
-                        child: TextFormField(
+                        child: TextField(
                             maxLines: 15,
                             decoration: InputDecoration(
                               hintText: "additional info...",
                               border: OutlineInputBorder(),
                             ),
-                            onSaved: (value) => _description = value,
+                            onChanged: (value){ setState(() { _description = value; }); },
+                            controller: _descriptionController
                         )
                     ),
 
