@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calendar_carousel/classes/event.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
+import 'package:kokushi_connect/attendance_page.dart';
 import 'package:kokushi_connect/create_class_page.dart';
 import 'package:kokushi_connect/create_event_page.dart';
 import 'package:kokushi_connect/event_page.dart';
@@ -63,7 +64,7 @@ class _CalendarPageState extends State<CalendarPage> {
   void moveToCreateEventPage() {
     Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => CreateClassPage(auth: widget.auth, db: widget.db),
+          builder: (context) => CreateEventPage(auth: widget.auth, db: widget.db),
         )
     );
   }
@@ -84,6 +85,7 @@ class CalendarEvent {
   String id;
   String title;
   String description;
+  String classId;
   DateTime start;
   DateTime end;
   String userId;
@@ -127,6 +129,7 @@ class _EventsPageState extends State<EventsPage>{
       //if (eventInfo['accountType'] != 'Coach'){
       CalendarEvent event = new CalendarEvent();
       event.id = document.documentID;
+      event.classId = eventInfo['classId'];
       event.start = eventInfo['startDate']; //not editable
       event.end = eventInfo['endDate']; //not editable
       event.title = eventInfo['title']; //editable
@@ -138,7 +141,9 @@ class _EventsPageState extends State<EventsPage>{
       if (checkDay(widget.date, event.start, event.end)) {
         eventTiles.add(new ListTile(
           title: Text(event.title),
-          onTap: moveToEventPage(event),
+          onTap: () {
+            moveToEventPage(event);
+          },
         ));
       }
     });
@@ -147,11 +152,22 @@ class _EventsPageState extends State<EventsPage>{
   }
 
   void moveToEventPage(CalendarEvent event) {
-    Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => EventPage(auth: widget.auth, db: widget.db, event: event,),
-        )
-    );
+    if (event.classId == null) {
+      Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) =>
+                EventPage(auth: widget.auth, db: widget.db, event: event,),
+          )
+      );
+    }
+    else {
+      Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) =>
+                EventPage(auth: widget.auth, db: widget.db, event: event,),
+          )
+      );
+    }
   }
 
   void initState() {

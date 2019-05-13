@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import
+'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kokushi_connect/auth.dart';
 import 'package:kokushi_connect/custom_app_bar.dart';
@@ -17,9 +18,10 @@ class CreateClassPage extends StatefulWidget {
 class _CreateClassPageState extends State<CreateClassPage> {
 
   final formKey = GlobalKey<FormState>();
+  DateTime _startDay = DateTime.now();
   DateTime _startTime = DateTime.now();
   DateTime _endTime = DateTime.now();
-  DateTime _repeatUntil = DateTime.now().add(new Duration(days: 30));
+  DateTime _repeatUntil = DateTime.now().add(new Duration(days: 7305));
   String _title;
   String _description;
   List<bool> _daysOfWeek = [false, false, false, false, false, false, false];
@@ -36,25 +38,32 @@ class _CreateClassPageState extends State<CreateClassPage> {
   }
 
   void validateAndSubmit() async {
-    DateTime currentDay = await _startTime;
-    while (_repeatUntil.isAfter(currentDay)) {
-      print("c: " + currentDay.weekday.toString());
-      print("s: " + _startTime.day.toString());
-      print("e: " + _endTime.day.toString());
-      if (_daysOfWeek[currentDay.weekday % 7]) {
-        try {
-          final String userId = await widget.auth.currentUser();
-          final String dojoId = await widget.db.getDojoIdByUserId(userId);
-          await widget.db.createEvent(
-              _startTime, _endTime, _title, _description, userId, dojoId);
+    _startTime = new DateTime(_startDay.year, _startDay.month, _startDay.day, _startTime.hour, _startTime.minute);
+    _endTime = new DateTime(_startDay.year, _startDay.month, _startDay.day, _endTime.hour, _endTime.minute);
+    try {
+      final String userId = await widget.auth.currentUser();
+      final String dojoId = await widget.db.getDojoIdByUserId(userId);
+      String classId = await widget.db.createClass(_title, _description, userId, dojoId);
+      DateTime currentDay = await _startTime;
+      while (_repeatUntil.isAfter(currentDay)) {
+        print("c: " + currentDay.weekday.toString());
+        print("s: " + _startTime.day.toString());
+        print("e: " + _endTime.day.toString());
+        if (_daysOfWeek[currentDay.weekday % 7]) {
+          try {
+            await widget.db.createEvent(_startTime, _endTime, _title, _description, userId, dojoId, classId);
+          }
+          catch (e) {
+            print('Error: $e');
+          }
         }
-        catch (e) {
-          print('Error: $e');
-        }
+        currentDay = await currentDay.add(new Duration(days: 1));
+        _startTime = await _startTime.add(new Duration(days: 1));
+        _endTime = await _endTime.add(new Duration(days: 1));
       }
-      currentDay = await currentDay.add(new Duration(days: 1));
-      _startTime = await _startTime.add(new Duration(days: 1));
-      _endTime = await _endTime.add(new Duration(days: 1));
+    }
+    catch (e) {
+      print('Error: $e');
     }
   }
 
@@ -81,7 +90,7 @@ class _CreateClassPageState extends State<CreateClassPage> {
 
   void createEvent() async {
     if (validateAndSave()) {
-      await validateAndSubmit();
+      validateAndSubmit();
       Navigator.pop(context);
     }
   }
@@ -89,16 +98,23 @@ class _CreateClassPageState extends State<CreateClassPage> {
   List<Widget> buildInputs () {
     return[
       DateTimePickerFormField(
-        decoration: InputDecoration(labelText: 'Start Date and Time'),
-        inputType: InputType.both,
+        decoration: InputDecoration(labelText: 'First Day'),
+        inputType: InputType.date,
+        format: DateFormat("EEEE, MMMM d, yyyy 'at' h:mma"),
+        onSaved: (value) => _startDay = value,
+      ),
+
+      DateTimePickerFormField(
+        decoration: InputDecoration(labelText: 'Start Time'),
+        inputType: InputType.time,
         format: DateFormat("EEEE, MMMM d, yyyy 'at' h:mma"),
         onSaved: (value) => _startTime = value,
         initialValue: _startTime,
       ),
 
       DateTimePickerFormField(
-        decoration: InputDecoration(labelText: 'End Date and Time'),
-        inputType: InputType.both,
+        decoration: InputDecoration(labelText: 'End Time'),
+        inputType: InputType.time,
         format: DateFormat("EEEE, MMMM d, yyyy 'at' h:mma"),
         onSaved: (value) => _endTime = value,
       ),
@@ -107,8 +123,8 @@ class _CreateClassPageState extends State<CreateClassPage> {
       repeatRow(),
 
       DateTimePickerFormField(
-        decoration: InputDecoration(labelText: 'Repeat Until'),
-        inputType: InputType.both,
+        decoration: InputDecoration(labelText: 'Repeat Until (Default 20 years)'),
+        inputType: InputType.date,
         format: DateFormat("EEEE, MMMM d, yyyy 'at' h:mma"),
         onSaved: (value) => _repeatUntil = value,
       ),
@@ -125,7 +141,7 @@ class _CreateClassPageState extends State<CreateClassPage> {
       ),
 
       RaisedButton(
-        child: Text('Create Event', style: TextStyle(fontSize: 20)),
+        child: Text('Create Class', style: TextStyle(fontSize: 20)),
         onPressed: createEvent,
       ),
     ];

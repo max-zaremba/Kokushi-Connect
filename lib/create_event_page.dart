@@ -42,7 +42,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
       try {
         final String userId = await widget.auth.currentUser();
         final String dojoId = await widget.db.getDojoIdByUserId(userId);
-        await widget.db.createEvent(_startDate, _endDate, _title, _description, userId, dojoId);
+        await widget.db.createEvent(_startDate, _endDate, _title, _description, userId, dojoId, null);
       }
       catch (e) {
         print('Error: $e');

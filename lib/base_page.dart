@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kokushi_connect/calendar_page.dart';
+import 'package:kokushi_connect/classes_page.dart';
 import 'package:kokushi_connect/db_control.dart';
 import 'package:kokushi_connect/home_page.dart';
 import 'package:kokushi_connect/student_info_page.dart';
@@ -22,7 +23,7 @@ class _BasePageState extends State<BasePage> {
     return [
       HomePage(auth: widget.auth, db: widget.db),
       CalendarPage(auth: widget.auth, db: widget.db),
-      null,
+      ClassesPage(auth: widget.auth, db: widget.db),
       StudentListPage(auth: widget.auth, db: widget.db,),
       ChannelsPage(auth: widget.auth, db: widget.db,),
       null,
@@ -90,7 +91,7 @@ class _BasePageState extends State<BasePage> {
               alignment: Alignment.center,
               iconSize: 36,
             ),
-            Text("Attendence")
+            Text("Classes")
           ],
         ),
         Column(

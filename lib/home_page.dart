@@ -1,4 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:kokushi_connect/calendar_page.dart';
+import 'package:kokushi_connect/event_page.dart';
 import 'auth.dart';
 import 'db_control.dart';
 import 'custom_app_bar.dart';
@@ -13,53 +17,110 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: Text('Welcome'),
-        context: context,
-        auth: widget.auth,
-        db: widget.db,
-      ),
-
-      body: Container(
-        child: updatesAndEvents(),
-      ),
-    );
-
+  String dojoId;
+  bool _loading = true;
+  List<CalendarEvent> events = [];
+  
+  void initState() {
+    super.initState();
+    getDojoId();
   }
 
-  ListView updatesAndEvents() {
+  void getDojoId() async {
+    dojoId = await widget.db.getUserDojo(await widget.auth.currentUser());
+    print(dojoId);
+    /*QuerySnapshot docs = await Firestore.instance.collection('dojos').document(dojoId).collection('members').getDocuments();
+    docs.documents.forEach((document) async {
+
+    });
+    print("in getDojoId after for each: students: $students");*/
+    setState(() {
+      _loading = false;
+    });
+
+  }
+  
+  @override
+  Widget build(BuildContext context) {
+    if (_loading) {
+      return CircularProgressIndicator();
+    } else {
+      return Scaffold(
+        appBar: CustomAppBar(
+          title: Text('Welcome'),
+          context: context,
+          auth: widget.auth,
+          db: widget.db,
+        ),
+
+        body: Container(
+          child: StreamBuilder(
+            stream: Firestore.instance
+                .collection('events')
+                .where('dojoId', isEqualTo: dojoId).where('startDate', isGreaterThanOrEqualTo: DateTime.now()).where('startDate', isLessThan: DateTime.now().add(new Duration(days: 14)))
+                .snapshots(),
+            builder: (BuildContext context,
+                AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.hasError)
+                return Text("Error!");
+              else if (!snapshot.hasData) return Text("No Students");
+              return getRecentEvents(snapshot);
+            },
+          ),
+        ),
+      );
+    }
+  }
+
+  ListView getRecentEvents(AsyncSnapshot<QuerySnapshot> snapshot) {
     TextStyle title = TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
+    int day = DateTime.now().day - 1;
+    DateFormat format = new DateFormat("EEEE, MMMM d, y");
     TextStyle date = TextStyle(fontSize: 20,);
-    List<ListTile> updates = new List(11);
-    updates[0] = new ListTile(
-      title: Text("Updates:", style: title,),
-    );
-    for (int i = 1; i < updates.length; i++) {
-      updates[i] = new ListTile(
-        title: Text("Update " + i.toString()),
-        subtitle: Text("Posted 2/2/22 2:22:22 by Mr. Zaremba"),
-      );
-    }
-    List<ListTile> events = new List(12);
-    events[0] = new ListTile(
+    List<ListTile> eventTiles = [];
+    eventTiles.add(new ListTile(
       title: Text("Events:", style: title,),
-    );
-    events[1] = new ListTile(
-      title: Text("June 7, 2019", style: date,),
-    );
-    for (int i = 2; i < events.length; i++) {
-      events[i] = new ListTile(
-        title: Text("We will be doing Judo. Come Join Us."),
-        subtitle: Text(i.toString() + ":00 PM"),
-      );
-    }
+    ));
+    snapshot.data.documents.forEach((document) {
+      Map<String, dynamic> eventInfo = document.data;
+      DateTime currDate = eventInfo['startDate'];
+      print("Day: " + currDate.day.toString());
+      CalendarEvent event = new CalendarEvent();
+      event.id = document.documentID;
+      event.classId = eventInfo['classId'];
+      event.start = eventInfo['startDate']; //not editable
+      event.end = eventInfo['endDate']; //not editable
+      event.title = eventInfo['title']; //editable
+      event.userId = eventInfo['userId']; //definite not editable
+      event.description = eventInfo['description'];
+      events.add(event);
+      if (currDate.day != day) {
+        day = currDate.day;
+        eventTiles.add(new ListTile(
+          title: Text(format.format(currDate), style: date,),
+        ));
+      }
+      eventTiles.add( new ListTile(
+        title: Text(eventInfo['title']),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => EventPage(auth: widget.auth, db: widget.db, event: event,),
+            ),
+          );
+        },
+      ));
+
+    });
 
     return ListView(
-      children: new List.from(updates)..addAll(events),
+      children: eventTiles,
     );
+  }
+
+  void moveToEvents (CalendarEvent event) {
+
   }
 
 }
