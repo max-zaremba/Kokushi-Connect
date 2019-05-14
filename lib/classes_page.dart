@@ -40,6 +40,7 @@ class _ClassesPageState extends State<ClassesPage>{
     print("Get students called");
     List<ListTile> classTiles = [];
     snapshot.data.documents.forEach((document) {
+      print("DOCUMENT: ${document.data}");
       Map<String, dynamic> classInfo = document.data;
       //if (classInfo['accountType'] != 'Coach'){
       Class dojoClass = new Class();
@@ -47,7 +48,8 @@ class _ClassesPageState extends State<ClassesPage>{
       dojoClass.name = classInfo['name']; //editable
       dojoClass.userId = classInfo['instructor']; //definite not editable
       dojoClass.description = classInfo['description'];
-      dojoClass.members = Map.from(classInfo['members']);//editable
+      if (classInfo['members'] != null)
+        dojoClass.members = Map.from(classInfo['members']);//editable
       //add email, uneditable, phone, also uneditable, up to you -AO
       //}
       classList.add(dojoClass);
