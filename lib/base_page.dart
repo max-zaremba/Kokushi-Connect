@@ -3,6 +3,7 @@ import 'package:kokushi_connect/calendar_page.dart';
 import 'package:kokushi_connect/db_control.dart';
 import 'package:kokushi_connect/home_page.dart';
 import 'package:kokushi_connect/student_info_page.dart';
+import 'package:kokushi_connect/settings.dart';
 import 'auth.dart';
 import 'channels_page.dart';
 
@@ -23,7 +24,7 @@ class _BasePageState extends State<BasePage> {
       null,
       StudentListPage(auth: widget.auth, db: widget.db,),
       ChannelsPage(auth: widget.auth, db: widget.db,),
-      null,
+      SettingsPage(auth: widget.auth, db: widget.db),
     ];
   }
   int pageNum = 0;
