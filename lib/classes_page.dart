@@ -23,7 +23,6 @@ class Class {
   String name;
   String description;
   String userId;
-  Map <String, String> members;
 
   Class();
 }
@@ -40,16 +39,13 @@ class _ClassesPageState extends State<ClassesPage>{
     print("Get students called");
     List<ListTile> classTiles = [];
     snapshot.data.documents.forEach((document) {
-      print("DOCUMENT: ${document.data}");
       Map<String, dynamic> classInfo = document.data;
       //if (classInfo['accountType'] != 'Coach'){
       Class dojoClass = new Class();
       dojoClass.id = document.documentID;
       dojoClass.name = classInfo['name']; //editable
       dojoClass.userId = classInfo['instructor']; //definite not editable
-      dojoClass.description = classInfo['description'];
-      if (classInfo['members'] != null)
-        dojoClass.members = Map.from(classInfo['members']);//editable
+      dojoClass.description = classInfo['description']; //editable
       //add email, uneditable, phone, also uneditable, up to you -AO
       //}
       classList.add(dojoClass);

@@ -23,6 +23,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
   DateTime _repeatUntil;
   String _title;
   String _description;
+  bool _trackAttendance = false;
   List<bool> _repeats = [false, false, false, false, false, false, false];
   InputType inputTypeDate = InputType.date;
   InputType inputTypeTime = InputType.time;
@@ -37,17 +38,15 @@ class _CreateEventPageState extends State<CreateEventPage> {
   }
 
   void validateAndSubmit() async {
-    DateTime currentDay = _startDate;
-    while (_repeatUntil.isAfter(currentDay)) {
-      try {
-        final String userId = await widget.auth.currentUser();
-        final String dojoId = await widget.db.getDojoIdByUserId(userId);
-        await widget.db.createEvent(_startDate, _endDate, _title, _description, userId, dojoId, null);
-      }
-      catch (e) {
-        print('Error: $e');
-      }
+    try {
+      final String userId = await widget.auth.currentUser();
+      final String dojoId = await widget.db.getDojoIdByUserId(userId);
+      await widget.db.createEvent(_startDate, _endDate, _title, _description, userId, dojoId, null, _trackAttendance);
     }
+    catch (e) {
+      print('Error: $e');
+    }
+
   }
 
   @override
@@ -109,6 +108,8 @@ class _CreateEventPageState extends State<CreateEventPage> {
         decoration: InputDecoration(labelText: "Description"),
         onSaved: (value) => _description = value,
       ),
+      
+      Checkbox(value: _trackAttendance, onChanged: (value){ setState(() { _trackAttendance = value; }); },),
 
       RaisedButton(
         child: Text('Create Event', style: TextStyle(fontSize: 20)),

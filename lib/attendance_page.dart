@@ -54,6 +54,7 @@ class _AttendancePageState extends State<AttendancePage> {
   }
 
   Widget build(BuildContext context) {
+    bool showDescription = (widget.dojoClass == null);
     if (_loading) {
       return CircularProgressIndicator();
     } else {
@@ -67,52 +68,44 @@ class _AttendancePageState extends State<AttendancePage> {
 
         body: Container(
           child: Column(children: [
-            new Expanded(child: StreamBuilder(
-              stream: Firestore.instance
-                  .collection('users')
-                  .where('dojoId', isEqualTo: dojoId)
-                  .snapshots(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (snapshot.hasError)
-                  return Text("Error!");
-                else if (!snapshot.hasData) return Text("No Students");
-                return ListView(children: getStudents(snapshot),);
-              },
-            )),
-            RaisedButton(
-              child: Text('Update Attendance', style: TextStyle(fontSize: 20)),
-              onPressed: updateAttendance,
-            ),
+            Visibility (child: ListTile(title: Text(widget.event.description)), visible: showDescription,),
+            Visibility (child: ListTile(title: Text(widget.event.userId)), visible: showDescription,),
+            Visibility (child:
+              new Expanded(child: StreamBuilder(
+                stream: Firestore.instance
+                    .collection('users')
+                    .where('dojoId', isEqualTo: dojoId)
+                    .snapshots(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                  if (snapshot.hasError)
+                    return Text("Error!");
+                  else if (!snapshot.hasData) return Text("No Students");
+                  return ListView(children: getStudents(snapshot),);
+                },
+            )), visible: widget.attendance != null,),
+            Visibility (child:
+              RaisedButton(
+                child: Text('Update Attendance', style: TextStyle(fontSize: 20)),
+                onPressed: updateAttendance,
+              ),
+            visible: widget.attendance != null,),
           ]),
           padding: const EdgeInsets.symmetric(vertical: 10.0),
         ),
       );
     }
   }
-  getStudent(AsyncSnapshot<QuerySnapshot> snapshot) {
-    print("hello");
-    snapshot.data.documents.forEach((document)  {
-      Map<String, dynamic> studentInfo = document.data;
-      print("Hello " + document.documentID);
-    });
-    return new ListTile(title: Text("Hello"),);
-  }
   getStudents(AsyncSnapshot<QuerySnapshot> snapshot) {
     print("Get students called");
     List<CheckboxListTile> studentTiles = [];
     if (_isChecked == null) {
-      if(widget.attendance == null) {
-        _isChecked = new Map();
-      }
-      else {
-        _isChecked = widget.attendance;
-      }
+      _isChecked = widget.attendance;
     }
     snapshot.data.documents.forEach((document) {
       Map<String, dynamic> studentInfo = document.data;
       //if (eventInfo['accountType'] != 'Coach'){
-      if (studentInfo['accountType'] != 'Coach' && widget.dojoClass.members[document.documentID] != null){
+      if (studentInfo['accountType'] != 'Coach'){
         Student stu = new Student();
         stu.id = document.documentID;
         stu.first_name = studentInfo['firstName'];//not editable

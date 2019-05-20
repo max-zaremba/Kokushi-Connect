@@ -23,40 +23,88 @@ class _CalendarPageState extends State<CalendarPage> {
   @override
 
   DateTime _currentDate = DateTime.now();
+  String dojoId = "";
+  bool _loading = true;
+  Map<String, Map<String, bool>> attendance = new Map();
+  List<CalendarEvent> eventList = new List();
+  List<DateTime> eventDays = new List();
 
-  Widget build(BuildContext context) {    
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: Text('Calendar'),
-        context: context,
-        auth: widget.auth,
-        db: widget.db,
-      ),
+  void initState() {
+    super.initState();
+    getDojoId();
+  }
 
-      body: Container(
-        child: Column(children: [
-          CalendarCarousel(
-            height: 410,
-            onDayPressed: (DateTime date, List<Event> events) {
-              this.setState(() => _currentDate = date);
-              events.forEach((event) => print(event.title));
-              moveToEvents(date);
-            },
-            selectedDateTime: _currentDate,
-          ),
+  void getDojoId() async {
+    dojoId = await widget.db.getUserDojo(await widget.auth.currentUser());
+    print(dojoId);
+    /*QuerySnapshot docs = await Firestore.instance.collection('dojos').document(dojoId).collection('members').getDocuments();
+    docs.documents.forEach((document) async {
 
-          RaisedButton(
-            child: Text('Create New Event', style: TextStyle(fontSize: 20)),
-            onPressed: moveToCreateEventPage,
-          ),
-      ]),),
+    });
+    print("in getDojoId after for each: students: $students");*/
+    setState(() {
+      _loading = false;
+    });
+
+  }
+
+  Widget build(BuildContext context) {
+    if (_loading) {
+      return CircularProgressIndicator();
+    }
+    else {
+      return Scaffold(
+        appBar: CustomAppBar(
+          title: Text('Calendar'),
+          context: context,
+          auth: widget.auth,
+          db: widget.db,
+        ),
+
+        body: Container(
+          child: Column(children: [
+            new Expanded(child: StreamBuilder(
+              stream: Firestore.instance
+                  .collection('events')
+                  .where('dojoId', isEqualTo: dojoId)
+                  .snapshots(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.hasError)
+                  return Text("Error!");
+                else if (!snapshot.hasData) return Text("No Students");
+                return ListView(children: [getStudents(snapshot)],);
+              },
+            )),
+
+            RaisedButton(
+              child: Text('Create New Event', style: TextStyle(fontSize: 20)),
+              onPressed: moveToCreateEventPage,
+            ),
+          ]),),
+      );
+    }
+  }
+
+  createCalendar () {
+    return CalendarCarousel(
+      height: 410,
+      onDayPressed: (DateTime date, List<Event> events) {
+        this.setState(() => _currentDate = date);
+        events.forEach((event) => print(event.title));
+        moveToEvents(date);
+      },
+      todayButtonColor: Colors.blue,
+      weekendTextStyle: new TextStyle(color: Colors.blue),
+      markedDates: eventDays,
+      markedDateWidget: Positioned(child: Container(color: Colors.redAccent, height: 6.0, width: 6.0), bottom: 6.0, left: 18),
     );
   }
 
   void moveToEvents(DateTime date) {
     Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => EventsPage(auth: widget.auth, db: widget.db, date: date,),
+          builder: (context) => EventsPage(auth: widget.auth, db: widget.db, date: date, events: eventList, attendance: attendance,),
         )
     );
   }
@@ -68,15 +116,50 @@ class _CalendarPageState extends State<CalendarPage> {
         )
     );
   }
+
+  getStudents(AsyncSnapshot<QuerySnapshot> snapshot) {
+    print("Get students called");
+    List<ListTile> eventTiles = [];
+    eventList = [];
+    eventDays = [];
+    snapshot.data.documents.forEach((document) {
+      Map<String, dynamic> eventInfo = document.data;
+      //if (eventInfo['accountType'] != 'Coach'){
+      CalendarEvent event = new CalendarEvent();
+      event.id = document.documentID;
+      event.classId = eventInfo['classId'];
+      event.start = eventInfo['startDate']; //not editable
+      event.end = eventInfo['endDate']; //not editable
+      event.title = eventInfo['title']; //editable
+      event.userId = eventInfo['userId']; //definite not editable
+      event.description = eventInfo['description']; //editable
+      if(eventInfo["attendance"] != null) {
+        try {
+          attendance[event.id] = Map.from(eventInfo['attendance']);
+        }
+        catch (e) {
+          attendance[event.id] = new Map();
+        }
+      }
+      //add email, uneditable, phone, also uneditable, up to you -AO
+      //}
+      eventList.add(event);
+      eventDays.add(event.start);
+      eventDays.add(event.end);
+    });
+    return createCalendar();
+  }
 }
 
 
 class EventsPage extends StatefulWidget {
-  EventsPage({this.auth, this.db, this.date});
+  EventsPage({this.auth, this.db, this.date, this.events, this.attendance});
 
   final BaseAuth auth;
   final Database db;
   final DateTime date;
+  final List<CalendarEvent> events;
+  final Map<String, Map<String, bool>> attendance;
 
   State<StatefulWidget> createState() => _EventsPageState();
 }
@@ -99,6 +182,8 @@ class _EventsPageState extends State<EventsPage>{
   String dojoId = "";
   List<CalendarEvent> eventList = [];
   bool _loading = true;
+  List<ListTile> eventTiles = [];
+  Map<String, Map<String, bool>> attendance = new Map();
   
   List<String> months = [
     "Nulltober",
@@ -121,24 +206,12 @@ class _EventsPageState extends State<EventsPage>{
         (date.day == end.day && date.month == end.month && date.year == end.year);
   }
 
-  getStudents(AsyncSnapshot<QuerySnapshot> snapshot) {
+  getStudents() {
     print("Get students called");
-    List<ListTile> eventTiles = [];
-    snapshot.data.documents.forEach((document) {
-      Map<String, dynamic> eventInfo = document.data;
-      //if (eventInfo['accountType'] != 'Coach'){
-      CalendarEvent event = new CalendarEvent();
-      event.id = document.documentID;
-      event.classId = eventInfo['classId'];
-      event.start = eventInfo['startDate']; //not editable
-      event.end = eventInfo['endDate']; //not editable
-      event.title = eventInfo['title']; //editable
-      event.userId = eventInfo['userId']; //definite not editable
-      event.description = eventInfo['description']; //editable
-      //add email, uneditable, phone, also uneditable, up to you -AO
-      //}
-      eventList.add(event);
+    eventTiles = [];
+    widget.events.forEach((event) {
       if (checkDay(widget.date, event.start, event.end)) {
+        eventList.add(event);
         eventTiles.add(new ListTile(
           title: Text(event.title),
           onTap: () {
@@ -152,22 +225,13 @@ class _EventsPageState extends State<EventsPage>{
   }
 
   void moveToEventPage(CalendarEvent event) {
-    if (event.classId == null) {
-      Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) =>
-                EventPage(auth: widget.auth, db: widget.db, event: event,),
-          )
-      );
-    }
-    else {
-      Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) =>
-                EventPage(auth: widget.auth, db: widget.db, event: event,),
-          )
-      );
-    }
+    Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) =>
+              AttendancePage(auth: widget.auth, db: widget.db, event: event, attendance: widget.attendance[event.id],),
+        )
+    );
+
   }
 
   void initState() {
@@ -205,19 +269,7 @@ class _EventsPageState extends State<EventsPage>{
 
         body: Container(
           child: Column(children: [
-            new Expanded(child: StreamBuilder(
-              stream: Firestore.instance
-                  .collection('events')
-                  .where('dojoId', isEqualTo: dojoId)
-                  .snapshots(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (snapshot.hasError)
-                  return Text("Error!");
-                else if (!snapshot.hasData) return Text("No Students");
-                return ListView(children: getStudents(snapshot),);
-              },
-            )),
+            new Expanded(child: ListView(children: getStudents())),
             RaisedButton(
               child: Text('Create New Event', style: TextStyle(fontSize: 20)),
               onPressed: moveToCreateEventPage,

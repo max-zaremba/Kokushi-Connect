@@ -9,11 +9,12 @@ import 'db_control.dart';
 import 'custom_app_bar.dart';
 
 class ClassEventsPage extends StatefulWidget {
-  ClassEventsPage({this.auth, this.db, this.dojoClass});
+  ClassEventsPage({this.auth, this.db, this.dojoClass, this.oldOrNew = -1});
 
   final BaseAuth auth;
   final Database db;
   final Class dojoClass;
+  final int oldOrNew;
 
   State<StatefulWidget> createState() => _ClassEventsPageState();
 }
@@ -23,7 +24,6 @@ class _ClassEventsPageState extends State<ClassEventsPage> {
   List<CalendarEvent> eventList = [];
   Map<String, Map<String, bool>> attendance = new Map();
   bool _loading = true;
-
 
   getEvents(AsyncSnapshot<QuerySnapshot> snapshot) {
     print("Get students called");
@@ -45,15 +45,21 @@ class _ClassEventsPageState extends State<ClassEventsPage> {
         print("Event: " + event.id);
         attendance[event.id] = Map.from(eventInfo['attendance']);
       }
-      eventList.add(event);
-      eventTiles.add(new ListTile(
-        title: Text(DateFormat("MMMM EEEE d y").format(event.start)),
-        onTap: () {
-          moveToEventPage(event, attendance[event.id]);
-        },
-      ));
+      if(DateTime.now().compareTo(event.end) * widget.oldOrNew >= 0) {
+        eventList.add(event);
+        ListTile tile = new ListTile(
+          title: Text(DateFormat("MMMM EEEE d y").format(event.start)),
+          onTap: () {
+            moveToEventPage(event, attendance[event.id]);
+          },
+        );
+        eventTiles.add(tile);
+      }
     });
 
+    if(widget.oldOrNew == 1) {
+      eventTiles = eventTiles.reversed.toList();
+    }
     return eventTiles;
   }
 
@@ -91,13 +97,6 @@ class _ClassEventsPageState extends State<ClassEventsPage> {
       return CircularProgressIndicator();
     } else {
       return Scaffold(
-        appBar: CustomAppBar(
-          title: Text("Class"),
-          context: context,
-          auth: widget.auth,
-          db: widget.db,
-        ),
-
         body: Container(
           child: Column(children: [
             new Expanded(child: StreamBuilder(
