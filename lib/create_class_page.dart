@@ -71,7 +71,7 @@ class _CreateClassPageState extends State<CreateClassPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-        title: Text('Calendar'),
+        title: Text('Create New Class'),
         context: context,
         auth: widget.auth,
         db: widget.db,
@@ -100,32 +100,31 @@ class _CreateClassPageState extends State<CreateClassPage> {
       DateTimePickerFormField(
         decoration: InputDecoration(labelText: 'First Day'),
         inputType: InputType.date,
-        format: DateFormat("EEEE, MMMM d, yyyy 'at' h:mma"),
+        format: DateFormat("EEEE, MMMM d, yyyy"),
         onSaved: (value) => _startDay = value,
       ),
 
       DateTimePickerFormField(
         decoration: InputDecoration(labelText: 'Start Time'),
         inputType: InputType.time,
-        format: DateFormat("EEEE, MMMM d, yyyy 'at' h:mma"),
+        format: DateFormat("h:mma"),
         onSaved: (value) => _startTime = value,
-        initialValue: _startTime,
       ),
 
       DateTimePickerFormField(
         decoration: InputDecoration(labelText: 'End Time'),
         inputType: InputType.time,
-        format: DateFormat("EEEE, MMMM d, yyyy 'at' h:mma"),
+        format: DateFormat("h:mma"),
         onSaved: (value) => _endTime = value,
       ),
 
-      Text("\nRepeat", style: new TextStyle(fontSize: 18),),
+      Text("\nRepeat", style: new TextStyle(fontSize: 18, color: Colors.grey),),
       repeatRow(),
 
       DateTimePickerFormField(
         decoration: InputDecoration(labelText: 'Repeat Until (Default 20 years)'),
         inputType: InputType.date,
-        format: DateFormat("EEEE, MMMM d, yyyy 'at' h:mma"),
+        format: DateFormat("EEEE, MMMM d, yyyy"),
         onSaved: (value) => _repeatUntil = value,
       ),
 

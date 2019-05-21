@@ -24,27 +24,42 @@ class _ClassPageState extends State<ClassPage> {
   int oldOrNew = -1;
   String buttonText = "See Old Events";
   String titleText = "Future Events";
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: Text(widget.dojoClass.name),
-        context: context,
-        auth: widget.auth,
-        db: widget.db,
-      ),
+  String name;
+  bool _loading = true;
 
-      body: Container(child: Column(children: [
-        ListTile(title: Text(widget.dojoClass.description)),
-        ListTile(title: Text("Taught by " + widget.dojoClass.userId)),
-        ListTile(title: Text(titleText, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),),
-        new Expanded (child: ClassEventsPage(auth: widget.auth, db: widget.db, dojoClass: widget.dojoClass, oldOrNew: oldOrNew,)),
-        RaisedButton(
-          child: Text(buttonText, style: TextStyle(fontSize: 20)),
-          onPressed: changeEvents,
+  void initState() {
+    super.initState();
+    getName();
+  }
+
+  Widget build(BuildContext context) {
+    if (_loading) {
+      return CircularProgressIndicator();
+    } else {
+      return Scaffold(
+        appBar: CustomAppBar(
+          title: Text(widget.dojoClass.name),
+          context: context,
+          auth: widget.auth,
+          db: widget.db,
         ),
-      ])
-      ),
-    );
+
+        body: Container(child: Column(children: [
+          ListTile(title: Text(widget.dojoClass.description)),
+          Divider(),
+          ListTile(title: Text("Taught by " + name)),
+          Divider(),
+          ListTile(title: Text(titleText, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),),
+          Divider(),
+          new Expanded (child: ClassEventsPage(auth: widget.auth, db: widget.db, dojoClass: widget.dojoClass, oldOrNew: oldOrNew,)),
+          RaisedButton(
+            child: Text(buttonText, style: TextStyle(fontSize: 20)),
+            onPressed: changeEvents,
+          ),
+        ])
+        ),
+      );
+    }
   }
 
 
@@ -54,6 +69,16 @@ class _ClassPageState extends State<ClassPage> {
           builder: (context) => ClassEventsPage(auth: widget.auth, db: widget.db, dojoClass: widget.dojoClass),
         )
     );
+  }
+
+  void getName () async{
+    String first = await widget.db.getFirstName(widget.dojoClass.userId);
+    String last = await widget.db.getLastName(widget.dojoClass.userId);
+    name = first + " " + last;
+
+    setState(() {
+      _loading = false;
+    });
   }
 
   void changeEvents() {

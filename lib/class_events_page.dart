@@ -27,7 +27,7 @@ class _ClassEventsPageState extends State<ClassEventsPage> {
 
   getEvents(AsyncSnapshot<QuerySnapshot> snapshot) {
     print("Get students called");
-    List<ListTile> eventTiles = [];
+    List<Widget> eventTiles = [];
     snapshot.data.documents.forEach((document) {
       Map<String, dynamic> eventInfo = document.data;
       //if (eventInfo['accountType'] != 'Coach'){
@@ -47,6 +47,9 @@ class _ClassEventsPageState extends State<ClassEventsPage> {
       }
       if(DateTime.now().compareTo(event.end) * widget.oldOrNew >= 0) {
         eventList.add(event);
+        if (eventTiles.isNotEmpty) {
+          eventTiles.add(Divider());
+        }
         ListTile tile = new ListTile(
           title: Text(DateFormat("MMMM EEEE d y").format(event.start)),
           onTap: () {

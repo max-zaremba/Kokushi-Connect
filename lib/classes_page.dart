@@ -37,7 +37,7 @@ class _ClassesPageState extends State<ClassesPage>{
 
   getClasses(AsyncSnapshot<QuerySnapshot> snapshot) {
     print("Get students called");
-    List<ListTile> classTiles = [];
+    List<Widget> classTiles = [];
     snapshot.data.documents.forEach((document) {
       Map<String, dynamic> classInfo = document.data;
       //if (classInfo['accountType'] != 'Coach'){
@@ -49,14 +49,16 @@ class _ClassesPageState extends State<ClassesPage>{
       //add email, uneditable, phone, also uneditable, up to you -AO
       //}
       classList.add(dojoClass);
-      if (true) {
-        classTiles.add(new ListTile(
-          title: Text(dojoClass.name),
-          onTap: () {
-            moveToClassPage(dojoClass);
-          },
-        ));
+      if (classTiles.isNotEmpty) {
+        classTiles.add(Divider());
       }
+      classTiles.add(new ListTile(
+        title: Text(dojoClass.name),
+        onTap: () {
+          moveToClassPage(dojoClass);
+        },
+      ));
+
     });
 
     return classTiles;

@@ -25,6 +25,7 @@ class _AttendancePageState extends State<AttendancePage> {
   List<Student> studentList = [];
   bool _loading = true;
   Map<String, bool>_isChecked;
+  String name = "";
 
 
   void updateAttendance () async {
@@ -40,6 +41,7 @@ class _AttendancePageState extends State<AttendancePage> {
   }
 
   void getDojoId() async {
+    await getName();
     dojoId = await widget.db.getUserDojo(await widget.auth.currentUser());
     print(dojoId);
     /*QuerySnapshot docs = await Firestore.instance.collection('dojos').document(dojoId).collection('members').getDocuments();
@@ -58,18 +60,27 @@ class _AttendancePageState extends State<AttendancePage> {
     if (_loading) {
       return CircularProgressIndicator();
     } else {
+      String title = "";
+      if (widget.dojoClass == null) {
+        title = widget.event.title;
+      }
+      else {
+        title = widget.event.title + ": " + DateFormat("MMMM d, y").format(widget.event.start);
+      }
       return Scaffold(
-        appBar: CustomAppBar(
-          title: Text("Class"),
-          context: context,
-          auth: widget.auth,
-          db: widget.db,
+        appBar: AppBar(
+          title: Text(title),
         ),
 
         body: Container(
           child: Column(children: [
             Visibility (child: ListTile(title: Text(widget.event.description)), visible: showDescription,),
-            Visibility (child: ListTile(title: Text(widget.event.userId)), visible: showDescription,),
+            Visibility (child: Divider(), visible: showDescription,),
+            Visibility (child: ListTile(title: Text("Created by " + name)), visible: showDescription,),
+            Visibility (child: Divider(), visible: showDescription,),
+            Visibility (child: ListTile(title: Text("Attendence", style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold,
+            ),),), visible: widget.attendance != null,),
+            Visibility (child: Divider(), visible: widget.attendance != null,),
             Visibility (child:
               new Expanded(child: StreamBuilder(
                 stream: Firestore.instance
@@ -89,16 +100,24 @@ class _AttendancePageState extends State<AttendancePage> {
                 child: Text('Update Attendance', style: TextStyle(fontSize: 20)),
                 onPressed: updateAttendance,
               ),
-            visible: widget.attendance != null,),
+              visible: widget.attendance != null,),
+
           ]),
           padding: const EdgeInsets.symmetric(vertical: 10.0),
         ),
       );
     }
   }
+
+  void getName () async{
+    String first = await widget.db.getFirstName(widget.event.userId);
+    String last = await widget.db.getLastName(widget.event.userId);
+    name = first + " " + last;
+  }
+
   getStudents(AsyncSnapshot<QuerySnapshot> snapshot) {
     print("Get students called");
-    List<CheckboxListTile> studentTiles = [];
+    List<Widget> studentTiles = [];
     if (_isChecked == null) {
       _isChecked = widget.attendance;
     }
@@ -123,6 +142,9 @@ class _AttendancePageState extends State<AttendancePage> {
         //add email, uneditable, phone, also uneditable, up to you -AO
 
         studentList.add(stu);
+        if(studentTiles.isNotEmpty) {
+          studentTiles.add(Divider());
+        }
         studentTiles.add(CheckboxListTile(
           title: Text(stu.first_name + " " + stu.last_name),
           value: _isChecked[stu.id],

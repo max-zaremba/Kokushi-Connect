@@ -76,10 +76,10 @@ class _HomePageState extends State<HomePage> {
     TextStyle title = TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
     int day = DateTime.now().day - 1;
     DateFormat format = new DateFormat("EEEE, MMMM d, y");
-    TextStyle date = TextStyle(fontSize: 20,);
-    List<ListTile> eventTiles = [];
+    TextStyle date = TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
+    List<Widget> eventTiles = [];
     eventTiles.add(new ListTile(
-      title: Text("Events:", style: title,),
+      title: Text("Upcoming Events:", style: title,),
     ));
     snapshot.data.documents.forEach((document) {
       Map<String, dynamic> eventInfo = document.data;
@@ -100,6 +100,7 @@ class _HomePageState extends State<HomePage> {
           title: Text(format.format(currDate), style: date,),
         ));
       }
+      eventTiles.add(Divider());
       eventTiles.add( new ListTile(
         title: Text(eventInfo['title']),
         onTap: () {

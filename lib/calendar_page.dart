@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calendar_carousel/classes/event.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
 import 'package:kokushi_connect/attendance_page.dart';
+import 'package:kokushi_connect/classes_page.dart';
 import 'package:kokushi_connect/create_class_page.dart';
 import 'package:kokushi_connect/create_event_page.dart';
 import 'package:kokushi_connect/event_page.dart';
@@ -182,7 +183,7 @@ class _EventsPageState extends State<EventsPage>{
   String dojoId = "";
   List<CalendarEvent> eventList = [];
   bool _loading = true;
-  List<ListTile> eventTiles = [];
+  List<Widget> eventTiles = [];
   Map<String, Map<String, bool>> attendance = new Map();
   
   List<String> months = [
@@ -212,6 +213,9 @@ class _EventsPageState extends State<EventsPage>{
     widget.events.forEach((event) {
       if (checkDay(widget.date, event.start, event.end)) {
         eventList.add(event);
+        if (eventTiles.isNotEmpty) {
+          eventTiles.add(Divider());
+        }
         eventTiles.add(new ListTile(
           title: Text(event.title),
           onTap: () {
@@ -225,10 +229,15 @@ class _EventsPageState extends State<EventsPage>{
   }
 
   void moveToEventPage(CalendarEvent event) {
+    Class dojoClass = null;
+    if (event.classId != null) {
+      dojoClass = new Class();
+      dojoClass.id = event.classId;
+    }
     Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) =>
-              AttendancePage(auth: widget.auth, db: widget.db, event: event, attendance: widget.attendance[event.id],),
+              AttendancePage(auth: widget.auth, db: widget.db, event: event, attendance: widget.attendance[event.id], dojoClass: dojoClass,),
         )
     );
 

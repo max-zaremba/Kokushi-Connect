@@ -53,7 +53,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-        title: Text('Calendar'),
+        title: Text('Create New Event'),
         context: context,
         auth: widget.auth,
         db: widget.db,
@@ -88,7 +88,6 @@ class _CreateEventPageState extends State<CreateEventPage> {
         inputType: InputType.both,
         format: DateFormat("EEEE, MMMM d, yyyy 'at' h:mma"),
         onSaved: (value) => _startDate = value,
-        initialValue: _startDate,
       ),
 
       DateTimePickerFormField(
@@ -108,7 +107,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
         decoration: InputDecoration(labelText: "Description"),
         onSaved: (value) => _description = value,
       ),
-      
+      Text("\nTrack Attendance?", style: new TextStyle(fontSize: 18, color: Colors.grey),),
       Checkbox(value: _trackAttendance, onChanged: (value){ setState(() { _trackAttendance = value; }); },),
 
       RaisedButton(
