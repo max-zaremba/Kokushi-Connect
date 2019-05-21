@@ -52,23 +52,40 @@ class _CreateUserPageState extends State<CreateUserPage> {
   String _description = "";
   InputType inputType = InputType.date;
 
-  bool validateAndSave() {
+  Future<bool> validateAndSave() async {
     final form = formKey.currentState;
     if (form.validate()) {
       form.save();
+      try {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return new Dialog(
+              child: new Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  new CircularProgressIndicator(),
+                  new Text("Loading"),
+                ],
+              ),
+            );
+          }
+        );
+        String userId = await widget.auth.createUserWithEmailAndPassword(_email, _password);
+        await widget.db.createAccount(_firstName, _lastName, _nickname, _dob, _belt, _accountType, _description, userId);
+      }
+      catch(e) {
+        print('Error: $e');
+      }
+      Navigator.pop(context);
       return true;
     }
     return false;
   }
 
   void validateAndSubmit() async {
-    try {
-      String userId = await widget.auth.createUserWithEmailAndPassword(_email, _password);
-      await widget.db.createAccount(_firstName, _lastName, _nickname, _dob, _belt, _accountType, _description, userId);
-    }
-    catch(e) {
-      print('Error: $e');
-    }
+
   }
 
   @override
@@ -90,9 +107,8 @@ class _CreateUserPageState extends State<CreateUserPage> {
     );
   }
 
-  void moveToCreateDojo() {
-    if (validateAndSave()) {
-      validateAndSubmit();
+  void moveToCreateDojo() async {
+    if (await validateAndSave()) {
       Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => CreateDojoPage(auth: widget.auth, db: widget.db),
@@ -101,9 +117,8 @@ class _CreateUserPageState extends State<CreateUserPage> {
     }
   }
 
-  void moveToJoinDojo() {
-    if (validateAndSave()) {
-      validateAndSubmit();
+  void moveToJoinDojo() async {
+    if (await validateAndSave()) {
       Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => JoinDojoPage(auth: widget.auth, db: widget.db),

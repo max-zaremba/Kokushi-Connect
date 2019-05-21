@@ -17,8 +17,6 @@ class BasePage extends StatefulWidget {
 }
 
 class _BasePageState extends State<BasePage> {
-  @override
-
   List <Widget> pages() {
     return [
       HomePage(auth: widget.auth, db: widget.db),
