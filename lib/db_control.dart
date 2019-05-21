@@ -28,8 +28,9 @@ abstract class Database {
 
   //create
   Future<void> createDojo(String dojoName, String address, String dojoCode);
-  Future<void> createEvent(DateTime startDate, DateTime endDate, String title, String description, String userId, String dojoId);
+  Future<void> createEvent(DateTime startDate, DateTime endDate, String title, String description, String userId, String dojoId, String classId, [bool trackAttendance]);
   Future<void> createAccount(String firstName, String lastName, String nickname, DateTime dob, String rank, String accountType, String description, String userId); //creates a new account
+  Future<String> createClass (String name, String description, String userId, String dojoId);
 
   //dojo getters
   Future<String> getDojoName(String dojoId);
@@ -165,8 +166,23 @@ class Db implements Database {
     return dojoId;
   }
 
-  Future<void> createEvent(DateTime startDate, DateTime endDate, String title, String description, String userId, String dojoId) async {
-    return _firestore.collection("events").document().setData({'startDate': startDate, 'endDate': endDate, 'title': title, 'description': description, 'userId': userId, 'dojoId': dojoId});
+  Future<void> createEvent(DateTime startDate, DateTime endDate, String title, String description, String userId, String dojoId, String classId, [bool trackAttendance = true]) async {
+    String eventId = _firestore.collection("events").document().documentID;
+    if (classId != null) {
+      addEventToClass(eventId, classId);
+    }
+    if (trackAttendance) {
+      return _firestore.collection("events").document(eventId).setData({'startDate': startDate, 'endDate': endDate, 'title': title, 'description': description, 'userId': userId, 'dojoId': dojoId, "classId": classId, "attendance": new Map()});
+    }
+    else {
+  return _firestore.collection("events").document(eventId).setData({'startDate': startDate, 'endDate': endDate, 'title': title, 'description': description, 'userId': userId, 'dojoId': dojoId, "classId": classId});
+    }
+  }
+
+  Future<String> createClass (String name, String description, String userId, String dojoId) async {
+    String id = await _firestore.collection("classes").document().documentID;
+    _firestore.collection("classes").document(id).setData({"name": name, "description": description, "dojoId": dojoId, "instructor": userId});
+    return id;
   }
 
   //gets all dojo information
@@ -213,6 +229,10 @@ class Db implements Database {
 
   Future<void> addMemberToDojo(String userId, String dojoId) {
     return _firestore.collection("dojos").document(dojoId).collection("members").add({ userId : true });
+  }
+
+  Future<void> addEventToClass(String eventId, String classId) {
+  return _firestore.collection("classes").document(classId).collection("events").add({ eventId : true });
   }
 
   //getters for event

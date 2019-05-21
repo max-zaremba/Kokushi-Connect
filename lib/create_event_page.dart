@@ -23,6 +23,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
   DateTime _repeatUntil;
   String _title;
   String _description;
+  bool _trackAttendance = false;
   List<bool> _repeats = [false, false, false, false, false, false, false];
   InputType inputTypeDate = InputType.date;
   InputType inputTypeTime = InputType.time;
@@ -37,24 +38,22 @@ class _CreateEventPageState extends State<CreateEventPage> {
   }
 
   void validateAndSubmit() async {
-    DateTime currentDay = _startDate;
-    while (_repeatUntil.isAfter(currentDay)) {
-      try {
-        final String userId = await widget.auth.currentUser();
-        final String dojoId = await widget.db.getDojoIdByUserId(userId);
-        await widget.db.createEvent(_startDate, _endDate, _title, _description, userId, dojoId);
-      }
-      catch (e) {
-        print('Error: $e');
-      }
+    try {
+      final String userId = await widget.auth.currentUser();
+      final String dojoId = await widget.db.getDojoIdByUserId(userId);
+      await widget.db.createEvent(_startDate, _endDate, _title, _description, userId, dojoId, null, _trackAttendance);
     }
+    catch (e) {
+      print('Error: $e');
+    }
+
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-        title: Text('Calendar'),
+        title: Text('Create New Event'),
         context: context,
         auth: widget.auth,
         db: widget.db,
@@ -89,7 +88,6 @@ class _CreateEventPageState extends State<CreateEventPage> {
         inputType: InputType.both,
         format: DateFormat("EEEE, MMMM d, yyyy 'at' h:mma"),
         onSaved: (value) => _startDate = value,
-        initialValue: _startDate,
       ),
 
       DateTimePickerFormField(
@@ -98,9 +96,6 @@ class _CreateEventPageState extends State<CreateEventPage> {
         format: DateFormat("EEEE, MMMM d, yyyy 'at' h:mma"),
         onSaved: (value) => _endDate = value,
       ),
-
-      Text("\nRepeat", style: new TextStyle(fontSize: 18),),
-      repeatRow(),
 
       TextFormField(
         decoration: InputDecoration(labelText: 'Title'),
@@ -112,6 +107,8 @@ class _CreateEventPageState extends State<CreateEventPage> {
         decoration: InputDecoration(labelText: "Description"),
         onSaved: (value) => _description = value,
       ),
+      Text("\nTrack Attendance?", style: new TextStyle(fontSize: 18, color: Colors.grey),),
+      Checkbox(value: _trackAttendance, onChanged: (value){ setState(() { _trackAttendance = value; }); },),
 
       RaisedButton(
         child: Text('Create Event', style: TextStyle(fontSize: 20)),
@@ -119,79 +116,4 @@ class _CreateEventPageState extends State<CreateEventPage> {
       ),
     ];
   }
-
-  Widget repeatRow () {
-    return Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-      new Flexible (child: CheckboxListTile(
-        title: Text('S'),
-        value: _repeats[0],
-        onChanged: (bool newValue) {
-          setState(() {
-            _repeats[0] = newValue;
-          });
-        },
-      )),
-
-      new Flexible (child: CheckboxListTile(
-        title: Text('M'),
-        value: _repeats[1],
-        onChanged: (bool newValue) {
-          setState(() {
-            _repeats[1] = newValue;
-          });
-        },
-      )),
-
-      new Flexible (child: CheckboxListTile(
-        title: Text('T'),
-        value: _repeats[2],
-        onChanged: (bool newValue) {
-          setState(() {
-            _repeats[2] = newValue;
-          });
-        },
-      )),
-
-      new Flexible (child: CheckboxListTile(
-        title: Text('W'),
-        value: _repeats[3],
-        onChanged: (bool newValue) {
-          setState(() {
-            _repeats[3] = newValue;
-          });
-        },
-      )),
-
-      new Flexible (child: CheckboxListTile(
-        title: Text('T'),
-        value: _repeats[4],
-        onChanged: (bool newValue) {
-          setState(() {
-            _repeats[4] = newValue;
-          });
-        },
-      )),
-
-      new Flexible(child: CheckboxListTile(
-        title: Text('F'),
-        value: _repeats[5],
-        onChanged: (bool newValue) {
-          setState(() {
-            _repeats[5] = newValue;
-          });
-        },
-      )),
-
-      new Flexible (child: CheckboxListTile(
-        title: Text('S'),
-        value: _repeats[6],
-        onChanged: (bool newValue) {
-          setState(() {
-            _repeats[6] = newValue;
-          });
-        },
-      )),
-    ]);
-  }
-
 }
