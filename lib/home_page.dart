@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:kokushi_connect/attendance_page.dart';
 import 'package:kokushi_connect/calendar_page.dart';
+import 'package:kokushi_connect/classes_page.dart';
 import 'package:kokushi_connect/event_page.dart';
 import 'auth.dart';
 import 'db_control.dart';
@@ -20,6 +22,7 @@ class _HomePageState extends State<HomePage> {
   String dojoId;
   bool _loading = true;
   List<CalendarEvent> events = [];
+  Map<String, Map<String, bool>> attendance = new Map();
   
   void initState() {
     super.initState();
@@ -93,6 +96,14 @@ class _HomePageState extends State<HomePage> {
       event.title = eventInfo['title']; //editable
       event.userId = eventInfo['userId']; //definite not editable
       event.description = eventInfo['description'];
+      if(eventInfo["attendance"] != null) {
+        try {
+          attendance[event.id] = Map.from(eventInfo['attendance']);
+        }
+        catch (e) {
+          attendance[event.id] = new Map();
+        }
+      }
       events.add(event);
       if (currDate.day != day) {
         day = currDate.day;
@@ -104,12 +115,7 @@ class _HomePageState extends State<HomePage> {
       eventTiles.add( new ListTile(
         title: Text(eventInfo['title']),
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => EventPage(auth: widget.auth, db: widget.db, event: event,),
-            ),
-          );
+          moveToEvents(event);
         },
       ));
 
@@ -121,7 +127,17 @@ class _HomePageState extends State<HomePage> {
   }
 
   void moveToEvents (CalendarEvent event) {
-
+    Class dojoClass = null;
+    if (event.classId != null) {
+      dojoClass = new Class();
+      dojoClass.id = event.classId;
+    }
+    Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) =>
+              AttendancePage(auth: widget.auth, db: widget.db, event: event, attendance: attendance[event.id], dojoClass: dojoClass,),
+        )
+    );
   }
 
 }

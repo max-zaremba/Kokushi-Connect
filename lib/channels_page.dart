@@ -65,7 +65,7 @@ class _ChannelsPage extends State<ChannelsPage> {
   }
 
   getChannels(AsyncSnapshot<QuerySnapshot> snapshot) {
-    List<ListTile> channels = [];
+    List<Widget> channels = [];
     snapshot.data.documents.forEach((document) {
       String groupName = '';
       if (document.data['name'] != '')
@@ -83,6 +83,9 @@ class _ChannelsPage extends State<ChannelsPage> {
               groupName += ' & ';
           }
         });
+      }
+      if(channels.isNotEmpty) {
+        channels.add(Divider());
       }
       channels.add(ListTile(title: Text(groupName), onTap: () => moveToChatPage(document.documentID),));
     });

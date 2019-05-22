@@ -164,7 +164,6 @@ class _CreateUserPageState extends State<CreateUserPage> {
       TextFormField(
         decoration: InputDecoration(labelText: "Nickname"),
         textCapitalization: TextCapitalization.sentences,
-        validator: (value) => value.isEmpty? 'Nickname can\'t be empty' : null,
         onSaved: (value) => _nickname = value,
       ),
 
