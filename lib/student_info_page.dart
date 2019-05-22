@@ -94,7 +94,7 @@ class _StudentListPageState extends State<StudentListPage> {
     print(students);
     print("students: $students");
 
-    List<ListTile> stuTiles = [];
+    List<Widget> stuTiles = [];
 
     snapshot.data.documents.forEach((document) {
       Map<String, dynamic> studentInfo = document.data;
@@ -111,6 +111,9 @@ class _StudentListPageState extends State<StudentListPage> {
         //add email, uneditable, phone, also uneditable, up to you -AO
 
         students.add(stu);
+        if(stuTiles.isNotEmpty) {
+          stuTiles.add(Divider());
+        }
         stuTiles.add(ListTile(
               title: Text(stu.first_name + " " + stu.last_name),
               onTap: () {
