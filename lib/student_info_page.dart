@@ -206,7 +206,7 @@ class _InfoPageState extends State<InfoPage> {
   }
 
   String initDescription() {
-    if (widget.student.nickname != null) {
+    if (widget.student.description != null) {
       return widget.student.description;
     } else {
       return "";
